@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -5,25 +6,36 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private BoxCollider2D b_collider;
     [SerializeField] private Rigidbody2D rb;
 
-    private Vector2 movement;
-    private float speed = 5f;
+    // -- CHARACTER DATA
+    [SerializeField] public CharacterData data;
+
+    // -- MOVEMENT STATS --
+    [SerializeField]
+    private Vector2 _movement;
+    private float playerSpeed = 2f;
+    private float jumpForce;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        HandleMovement();
+        _movement = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")); 
+        HandleMovement(_movement);
     }
 
-    private void HandleMovement()
+    private void HandleMovement(Vector2 direction)
     {
-        float input = Input.GetAxis("Horizontal");
-        movement.x = input * speed * Time.deltaTime;
-        transform.Translate(movement);
+        rb.AddForce(direction * playerSpeed);
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Console.WriteLine("Jumpingggg");
+        }
+        
     }
 }
