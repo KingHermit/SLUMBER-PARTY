@@ -7,4 +7,6 @@ public class MoveData : ScriptableObject
     public float startup;
     public float active;
     public float recovery;
+
+    public HitboxData hitbox;
 }

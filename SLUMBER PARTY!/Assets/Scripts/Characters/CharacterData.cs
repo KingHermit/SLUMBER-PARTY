@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = "Fighter/CharacterData")]
 public class CharacterData : ScriptableObject
@@ -12,4 +14,5 @@ public class CharacterData : ScriptableObject
     public int maxHealth;
 
     public RuntimeAnimatorController animatorController;
+    public List<MoveData> moves;
 }
