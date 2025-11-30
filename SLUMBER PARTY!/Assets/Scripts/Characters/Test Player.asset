@@ -16,7 +16,7 @@ MonoBehaviour:
   CharacterDescription: he's our test dummuy
   CharacterType: THE OG
   speed: 5
-  jumpForce: 8
+  jumpForce: 7.5
   maxHealth: 100
   animatorController: {fileID: 0}
   moves: []

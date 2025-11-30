@@ -400,8 +400,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b05b292173eb3e14daeb1ad4f3c1b7eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  data: {fileID: 0}
   b_collider: {fileID: 1585923605}
   rb: {fileID: 1585923606}
+  playerSpeed: 0
+  fallThroughDuration: 0.3
+  platformLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!212 &1585923608
 SpriteRenderer:
   m_ObjectHideFlags: 0
