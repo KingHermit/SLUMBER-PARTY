@@ -1,10 +1,11 @@
 ## WEEK 1: MOVEMENT CONTROLS / CORE MECHANICS
 **MOVEMENT**
 - [X] Horizontal (Left/Right)
-- [ ] Vertical (Jumping)
+- [X] Vertical (Jumping)
 - [ ] Implemented mobile controls
-- [ ] Adjust speed and gravity to liking
-- [ ] Double-check for extra needed speed + gravity variables
+- [X] Adjust speed and gravity to liking
+- [X] Double-check for extra needed speed + gravity variables
+- [X] Phasing through platforms 
 
 **COMBAT**
 - [ ] Implement hitting
