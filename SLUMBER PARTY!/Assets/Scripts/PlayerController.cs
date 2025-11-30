@@ -60,10 +60,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isGrounded() && Input.GetAxisRaw("Vertical") < 0 && !fallingThrough)
-        {
-            StartCoroutine(FallThroughPlatform());
-        }
+
     }
 
     public void Jump(InputAction.CallbackContext context)
