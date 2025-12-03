@@ -498,9 +498,9 @@ GameObject:
   - component: {fileID: 1210743241}
   - component: {fileID: 1210743240}
   - component: {fileID: 1210743242}
+  - component: {fileID: 1210743243}
   - component: {fileID: 1210743239}
   - component: {fileID: 1210743238}
-  - component: {fileID: 1210743243}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -672,6 +672,7 @@ MonoBehaviour:
   jumpPressed: 0
   jumpForce: 0
   fallThroughDuration: 0.3
+  fallingThrough: 0
 --- !u!114 &1210743243
 MonoBehaviour:
   m_ObjectHideFlags: 0
