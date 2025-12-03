@@ -11,7 +11,9 @@ public class IdleState : PlayerState
     }
 
     // Called ONCE when exiting the state
-    public override void Exit() { }
+    public override void Exit() {
+        
+    }
 
     // Called every frame
     public override void UpdateLogic() {
@@ -35,6 +37,12 @@ public class IdleState : PlayerState
         {
             stateMachine.ChangeState(player.falling);
             return;
+        }
+
+        if (player.isAttacking) // erm
+        {
+            player.isAttacking = false;
+            stateMachine.ChangeState(player.attacking);
         }
     }
 

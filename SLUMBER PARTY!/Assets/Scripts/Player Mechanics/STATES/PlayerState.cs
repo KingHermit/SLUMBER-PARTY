@@ -4,6 +4,7 @@ public abstract class PlayerState
 {
     protected PlayerController player;
     protected PlayerStateMachine stateMachine;
+    protected MoveData move;
 
     protected PlayerState(PlayerController player, PlayerStateMachine stateMachine)
     {
@@ -22,4 +23,7 @@ public abstract class PlayerState
 
     // Called every physics frame
     public abstract void UpdatePhysics();
+
+    // Only for Attacking State
+    public virtual void SetMove(MoveData m) { }
 }

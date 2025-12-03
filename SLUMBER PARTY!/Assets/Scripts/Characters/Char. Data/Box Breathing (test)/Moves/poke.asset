@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15dd1430358ca2d45ba991aad45a4dee, type: 3}
+  m_Name: poke
+  m_EditorClassIdentifier: 
+  moveName: poke
+  type: Light
+  startup: 1
+  active: 3
+  recovery: 2
+  hitboxes:
+  - {fileID: 11400000, guid: bd6ef63ac11d02342b2d9fe76797c542, type: 2}

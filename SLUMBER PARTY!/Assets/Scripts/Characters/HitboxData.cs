@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Fighter/CharacterData")]
+[CreateAssetMenu(menuName = "Fighter/HitboxData")]
 public class HitboxData : ScriptableObject
 {
     public Vector2 offset;

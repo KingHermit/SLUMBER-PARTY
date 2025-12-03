@@ -7,6 +7,7 @@ public class JumpingState : PlayerState
 
     // Called ONCE when entering the state
     public override void Enter() {
+        player._animator.SetBool("isJumping", true);
         Debug.Log("Current state: Jumping");
 
         // jump ONE time
@@ -17,7 +18,9 @@ public class JumpingState : PlayerState
     }
 
     // Called ONCE when exiting the state
-    public override void Exit() { }
+    public override void Exit() {
+        player._animator.SetBool("isJumping", false);
+    }
 
     // Called every frame
     public override void UpdateLogic() {

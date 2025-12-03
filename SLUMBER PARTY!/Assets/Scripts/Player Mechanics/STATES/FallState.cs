@@ -7,11 +7,14 @@ public class FallingState : PlayerState
 
     // Called ONCE when entering the state
     public override void Enter() {
+        player._animator.SetBool("isFalling", true);
         Debug.Log("Current State: Falling");
     }
 
     // Called ONCE when exiting the state
-    public override void Exit() { }
+    public override void Exit() {
+        player._animator.SetBool("isFalling", false);
+    }
 
     // Called every frame
     public override void UpdateLogic() {
@@ -26,7 +29,7 @@ public class FallingState : PlayerState
         // Air control while falling
         player.rb.linearVelocity = new Vector2(
             player._moveDirection.x * player.playerSpeed,
-            player.rb.linearVelocity.y
+            Mathf.Max(player.rb.linearVelocity.y, -player.maxFallSpeed)
         );
     }
 }

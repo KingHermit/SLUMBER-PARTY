@@ -17,4 +17,12 @@ public class PlayerStateMachine : MonoBehaviour
         currentState = newState;
         newState.Enter();
     }
+
+    public void ChangeState(PlayerState newState, MoveData move)
+    {
+        currentState?.Exit();
+        newState.SetMove(move);   // only AttackState will care about this
+        currentState = newState;
+        currentState.Enter();
+    }
 }

@@ -32,6 +32,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Light Attack",
+                    "type": "Button",
+                    "id": "c4ad2a98-82ea-415a-b5f0-80ed9cf63166",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -114,8 +123,8 @@
                 },
                 {
                     "name": "",
-                    "id": "f6686cd9-33ca-4e69-b48b-ea9e71f59f94",
-                    "path": "<Keyboard>/w",
+                    "id": "7410540f-ee69-47e2-a118-7dc0b7f9f070",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -125,8 +134,8 @@
                 },
                 {
                     "name": "",
-                    "id": "7410540f-ee69-47e2-a118-7dc0b7f9f070",
-                    "path": "<Keyboard>/space",
+                    "id": "b9f55249-66df-4abe-b526-c2042e1aa1fd",
+                    "path": "<Keyboard>/upArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -153,6 +162,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Drop",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d233ed88-563d-4ac8-84b7-da866af79bca",
+                    "path": "<Keyboard>/h",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Light Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7f36e2d0-bef0-4d01-ab2d-f8b01ea76e42",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Light Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

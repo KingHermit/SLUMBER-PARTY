@@ -10,12 +10,15 @@ public class PlayerController : MonoBehaviour
 {
     // -- CHARACTER DATA --
     [SerializeField] private CharacterData data;
-    [SerializeField] private PlayerStateMachine playerStateMachine;
+    private PlayerStateMachine playerStateMachine;
+    public Transform hitboxParent;
+    public GameObject hitboxPrefab;
 
     // -- COMPONENTS --
-    private BoxCollider2D b_collider;
+    // private BoxCollider2D b_collider;
     [HideInInspector] public Rigidbody2D rb;
-    public InputActionReference move;
+    public InputActionReference m_input;
+    public Animator _animator;
 
     // -- PLAYER STATES --
     public IdleState idle;
@@ -27,13 +30,14 @@ public class PlayerController : MonoBehaviour
 
     // -- MOVEMENT STATS --
     [Header("Movement")]
-    [SerializeField] public float playerSpeed;
+    [SerializeField] public float playerSpeed { get; private set; }
     [HideInInspector] public Vector2 _moveDirection;
 
     // -- JUMPING --
     [Header("Jumping")]
     [HideInInspector] public bool jumpPressed;
-    [SerializeField] public float jumpForce;
+    [SerializeField] public float jumpForce { get; private set; }
+    public float maxFallSpeed = 45;
 
     // -- GROUND CHECKING --
     [Header("Ground Check")]
@@ -42,21 +46,26 @@ public class PlayerController : MonoBehaviour
     // -- PHASING THROUGH --
     [Header("Drop / Phase Through")]
     [SerializeField] private float fallThroughDuration = 0.3f;
-    public bool fallingThrough;
+
+    // -- BOOLEANS --
+    public bool isAttacking;
+    public bool fallingThrough { get; private set; }
 
     private void Awake()
     {
-        fallingThrough = false;
         rb = GetComponent<Rigidbody2D>();
-        b_collider = GetComponent<BoxCollider2D>();
+        _animator = GetComponent<Animator>();
 
         playerStateMachine = new PlayerStateMachine();
+        hitboxParent = transform.Find("HITBOXES");
+        hitboxPrefab = Resources.Load<GameObject>("hitbox");
 
         idle = new IdleState(this, playerStateMachine);
         running = new RunningState(this, playerStateMachine);
         jumping = new JumpingState(this, playerStateMachine);
         falling = new FallingState(this, playerStateMachine);
-        // TODO: attacking and hitstun
+        attacking = new AttackState(this, playerStateMachine);
+        // TODO: hitstun
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -110,9 +119,35 @@ public class PlayerController : MonoBehaviour
 
     // -- INPUT SYSTEM CALLBACKS --
 
+    public void OnLightAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            //Debug.Log("ATTACK!!!");
+            isAttacking = true;
+            playerStateMachine.ChangeState(attacking, data.moves[0]);
+        }
+    }
+
+    public void OnMediumAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            playerStateMachine.ChangeState(attacking);
+        }
+    }
+
+    public void OnHeavyAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            playerStateMachine.ChangeState(attacking);
+        }
+    }
+
     public void OnMove(InputAction.CallbackContext context)
     {
-        _moveDirection = move.action.ReadValue<Vector2>();
+        _moveDirection = m_input.action.ReadValue<Vector2>();
         if (isGrounded()) { playerStateMachine.ChangeState(running); }
     }
 

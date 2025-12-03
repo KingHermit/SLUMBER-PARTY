@@ -8,15 +8,18 @@ public class RunningState : PlayerState
 
     // Called ONCE when entering the state
     public override void Enter() {
+        player._animator.SetBool("isRunning", true);
         Debug.Log("Current state: Running");
     }
 
     // Called ONCE when exiting the state
-    public override void Exit() { }
+    public override void Exit() {
+        player._animator.SetBool("isRunning", false);
+    }
 
     // Called every frame
     public override void UpdateLogic() {
-        
+
         if (player._moveDirection.x == 0 && player.isGrounded())
         {
             stateMachine.ChangeState(player.idle);
