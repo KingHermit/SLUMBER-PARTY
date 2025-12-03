@@ -4,9 +4,10 @@ using UnityEngine;
 public class MoveData : ScriptableObject
 {
     public string moveName;
-    public float startup;
-    public float active;
-    public float recovery;
+    public string type; // Light, Medium, Heavy, SPECIAL
+    public int startup;
+    public int active;
+    public int recovery;
 
-    public HitboxData hitbox;
+    public HitboxData[] hitboxes;
 }

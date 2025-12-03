@@ -1,0 +1,135 @@
+using NUnit.Framework.Interfaces;
+using System;
+using System.Collections;
+using Unity.IO.LowLevel.Unsafe;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using static UnityEditor.Searcher.SearcherWindow.Alignment;
+
+public class PlayerController : MonoBehaviour
+{
+    // -- CHARACTER DATA --
+    [SerializeField] private CharacterData data;
+    [SerializeField] private PlayerStateMachine playerStateMachine;
+
+    // -- COMPONENTS --
+    private BoxCollider2D b_collider;
+    [HideInInspector] public Rigidbody2D rb;
+    public InputActionReference move;
+
+    // -- PLAYER STATES --
+    public IdleState idle;
+    public RunningState running;
+    public JumpingState jumping;
+    public FallingState falling;
+    public AttackState attacking;
+    public HitstunState stunned;
+
+    // -- MOVEMENT STATS --
+    [Header("Movement")]
+    [SerializeField] public float playerSpeed;
+    [HideInInspector] public Vector2 _moveDirection;
+
+    // -- JUMPING --
+    [Header("Jumping")]
+    [HideInInspector] public bool jumpPressed;
+    [SerializeField] public float jumpForce;
+
+    // -- GROUND CHECKING --
+    [Header("Ground Check")]
+    private PlatformEffector2D effector;
+
+    // -- PHASING THROUGH --
+    [Header("Drop / Phase Through")]
+    [SerializeField] private float fallThroughDuration = 0.3f;
+    public bool fallingThrough;
+
+    private void Awake()
+    {
+        fallingThrough = false;
+        rb = GetComponent<Rigidbody2D>();
+        b_collider = GetComponent<BoxCollider2D>();
+
+        playerStateMachine = new PlayerStateMachine();
+
+        idle = new IdleState(this, playerStateMachine);
+        running = new RunningState(this, playerStateMachine);
+        jumping = new JumpingState(this, playerStateMachine);
+        falling = new FallingState(this, playerStateMachine);
+        // TODO: attacking and hitstun
+    }
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        playerStateMachine.Initialize(idle);
+        Debug.Log("Character reporting for duty: " + data.name);
+
+        playerSpeed = data.speed;
+        jumpForce = data.jumpForce;
+    }
+
+    private IEnumerator FallThroughPlatform()
+    {
+        effector = GetCurrentPlatformEffector();
+
+        fallingThrough = true;
+        effector.rotationalOffset = 180f;
+
+        rb.linearVelocity = new Vector2(rb.linearVelocity.y, -5f); // apply downward force
+
+        yield return new WaitForSeconds(fallThroughDuration);
+
+        effector.rotationalOffset = 0;
+        fallingThrough = false;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        playerStateMachine.currentState.UpdateLogic();
+    }
+
+    private void FixedUpdate()
+    {
+        playerStateMachine.currentState.UpdatePhysics();
+    }
+
+    public bool isGrounded()
+    {
+        return Physics2D.Raycast(transform.position, Vector2.down, 1.2f, LayerMask.GetMask("Platforms"));
+    }
+
+    private PlatformEffector2D GetCurrentPlatformEffector()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.2f, LayerMask.GetMask("Platforms"));
+        if (hit.collider != null)
+            return hit.collider.GetComponent<PlatformEffector2D>();
+        return null;
+    }
+
+    // -- INPUT SYSTEM CALLBACKS --
+
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        _moveDirection = move.action.ReadValue<Vector2>();
+        if (isGrounded()) { playerStateMachine.ChangeState(running); }
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed && isGrounded())
+        {
+            playerStateMachine.ChangeState(jumping);
+        }
+    }
+
+    public void OnDrop(InputAction.CallbackContext context)
+    {
+        if (context.performed && isGrounded())
+        {
+            playerStateMachine.ChangeState(falling);
+            StartCoroutine("FallThroughPlatform");
+        }
+    }
+}
