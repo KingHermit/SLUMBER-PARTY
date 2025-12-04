@@ -17,7 +17,6 @@ public class HitboxData : ScriptableObject
     public float damage;
 
     [Header("Knockback")]
-    public float knockBack;
-    public float knockBackSpeed;
-    public float knockBackAngle;
+    public Vector2 direction;
+    public float knockbackForce;
 }

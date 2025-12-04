@@ -48,7 +48,6 @@ public class AttackState : PlayerState
     // Called ONCE when exiting the state
     public override void Exit()
     {
-        Debug.Log("BYE! I'm done");
         player.isAttacking = false;
         timer = 0;
         // exit once animation / recovery frames finish
@@ -96,7 +95,7 @@ public class AttackState : PlayerState
 
         // slightly halt movement while attacking
         player.rb.linearVelocity = new Vector2(
-            player._moveDirection.x * (player.playerSpeed * 0.4f),
+            player._moveDirection.x * (player.playerSpeed * 0.4f), // 0.4f change per attack (light, heavy, medium maybe?)
             player.rb.linearVelocity.y
         );
     }
@@ -122,7 +121,7 @@ public class AttackState : PlayerState
             {
                 spawned[hb] = true;
 
-                Debug.Log($"[SPAWN]: {hb.name} at {timer}"); // second punch hitbox never instantiates
+                // Debug.Log($"[SPAWN]: {hb.name} at {timer}");
 
                 GameObject hitbox = GameObject.Instantiate(hb.HitboxPrefab); // create hitbox item
                 hitbox.transform.SetParent(player.hitboxParent);
@@ -143,7 +142,7 @@ public class AttackState : PlayerState
 
             if (timer >= endTime)
             {
-                Debug.Log($"[DESPAWN] {hb.data.name} at {timer}");
+                // Debug.Log($"[DESPAWN] {hb.data.name} at {timer}");
 
                 hb.Disable();
                 GameObject.Destroy(hb.gameObject);

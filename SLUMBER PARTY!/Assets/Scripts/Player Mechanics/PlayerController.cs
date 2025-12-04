@@ -12,7 +12,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private CharacterData data;
     private PlayerStateMachine playerStateMachine;
     public Transform hitboxParent;
-    //public GameObject hitboxPrefab;
+
+    [Header("STATS")]
+    public float health { get; private set; }
 
     // -- COMPONENTS --
     [HideInInspector] public Rigidbody2D rb;
@@ -29,9 +31,9 @@ public class PlayerController : MonoBehaviour
 
     // -- MOVEMENT STATS --
     [Header("Movement")]
-    [SerializeField] public float playerSpeed { get; private set; }
-    [SerializeField] public Vector2 _moveDirection;
-    public int facing;
+    public float playerSpeed { get; private set; }
+    public Vector2 _moveDirection {  get; private set; }
+    public int facing { get; private set; }
 
     // -- JUMPING --
     [Header("Jumping")]
@@ -53,6 +55,9 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        foreach (var hb in GetComponentsInChildren<HurtboxController>())
+            hb.owner = this; // set owner properly
+
         rb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
 
@@ -65,7 +70,7 @@ public class PlayerController : MonoBehaviour
         jumping = new JumpingState(this, playerStateMachine);
         falling = new FallingState(this, playerStateMachine);
         attacking = new AttackState(this, playerStateMachine);
-        // TODO: hitstun
+        stunned = new HitstunState(this, playerStateMachine);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -74,6 +79,7 @@ public class PlayerController : MonoBehaviour
         playerStateMachine.Initialize(idle);
         Debug.Log("Character reporting for duty: " + data.name);
 
+        health = data.maxHealth;
         playerSpeed = data.speed;
         jumpForce = data.jumpForce;
     }
@@ -128,6 +134,20 @@ public class PlayerController : MonoBehaviour
         return null;
     }
 
+    public void OnHit(HitboxController hb)
+    {
+        // apply damage
+        health -= hb.data.damage;
+
+        // apply knockback
+        Vector2 kb = hb.data.direction.normalized * hb.data.knockbackForce;
+        kb.x *= hb.owner.facing; // flip
+        rb.linearVelocity = kb;
+
+        // enter hitstun state
+        playerStateMachine.ChangeState(stunned);
+    }
+
     // -- INPUT SYSTEM CALLBACKS --
 
     public void OnLightAttack(InputAction.CallbackContext context)
@@ -152,7 +172,8 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
-            playerStateMachine.ChangeState(attacking);
+            isAttacking = true;
+            playerStateMachine.ChangeState(attacking, data.moves[2]);
         }
     }
 

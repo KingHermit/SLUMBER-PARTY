@@ -13,7 +13,7 @@ public class CharacterData : ScriptableObject
     [Header("Base Stats")]
     public float speed;
     public float jumpForce;
-    public int maxHealth;
+    public float maxHealth;
 
     [Header("Components")]
     public RuntimeAnimatorController animatorController;

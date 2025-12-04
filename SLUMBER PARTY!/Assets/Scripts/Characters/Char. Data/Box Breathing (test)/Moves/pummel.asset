@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 15dd1430358ca2d45ba991aad45a4dee, type: 3}
-  m_Name: punch
+  m_Name: pummel
   m_EditorClassIdentifier: 
-  moveName: punch
-  type: Medium
-  startup: 3
-  active: 6
-  recovery: 3
+  moveName: pummel
+  type: Heavy
+  startup: 5
+  active: 10
+  recovery: 4
   hitboxes:
-  - {fileID: 11400000, guid: 2d16ea0280dc4a741860c9e2d3b947b8, type: 2}
-  - {fileID: 11400000, guid: 62a9e3554336a5246a7439446381f8ef, type: 2}
+  - {fileID: 11400000, guid: 1b6b109bde142e24db57b1cc16141d7a, type: 2}
+  - {fileID: 11400000, guid: e86f34677b9f02849bf0fd3df83bafa2, type: 2}

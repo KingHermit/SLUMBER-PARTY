@@ -28,7 +28,7 @@ public class HitboxController : MonoBehaviour
         box.offset = hitboxData.offset;
 
         // Snap to initial position
-        Vector3 placedLocal = new Vector3(localOffset.x * owner.facing, localOffset.y, 0f);
+        Vector3 placedLocal = new Vector3(localOffset.x * owner.facing, localOffset.y * owner.facing, 0f);
         transform.localPosition = placedLocal;
 
         Enable();
@@ -39,7 +39,7 @@ public class HitboxController : MonoBehaviour
         if (!active) return;
 
         // Make the hitbox follow the player (disjoint or attached)
-        transform.localPosition = new Vector3(localOffset.x * owner.facing, localOffset.y, 0f);
+        transform.localPosition = new Vector3(localOffset.x * owner.facing, localOffset.y * owner.facing, 0f);
     }
 
     private bool active;
@@ -60,17 +60,8 @@ public class HitboxController : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (!active) return;
-
-        // Prevent hitting self
-        if (other.gameObject == owner.gameObject) return;
-
-        //var hurtbox = other.GetComponent<Hurtbox>();
-        //if (hurtbox)
-        //{
-        //    hurtbox.TakeHit(data, owner);
-        //    Disable();
-        //}
     }
+
     void OnDrawGizmos()
     {
         if (box == null) box = GetComponent<BoxCollider2D>();

@@ -9,13 +9,13 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Player (You)
+  - 
   - Water
   - UI
   - Platforms
   - Other Players
   - Hitboxes
-  - 
+  - Hurtboxes
   - 
   - 
   - 
