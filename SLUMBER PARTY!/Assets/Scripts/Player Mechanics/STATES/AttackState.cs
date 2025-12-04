@@ -56,16 +56,16 @@ public class AttackState : PlayerState
         // startup -> active
         if (timer >= start && timer < start + active)
         {
-            if (activeHitboxes.Count == 0) // doesn't pass this part..?
+            if (activeHitboxes.Count == 0)
             {
                 SpawnHitboxes();
             }
         }
 
         // active -> recovery frames
-
         else if (timer >= start + active && activeHitboxes.Count > 0)
         {
+            Debug.Log("In recovery");
             DestroyHitboxes();
         }
 
@@ -102,7 +102,6 @@ public class AttackState : PlayerState
         {
             GameObject obj = GameObject.Instantiate(player.hitboxPrefab);
             obj.transform.SetParent(player.hitboxParent); // <-- key difference
-            obj.transform.position = player.transform.position + (Vector3)h.offset;
 
             var controller = obj.GetComponent<HitboxController>();
             controller.Setup(h, player);

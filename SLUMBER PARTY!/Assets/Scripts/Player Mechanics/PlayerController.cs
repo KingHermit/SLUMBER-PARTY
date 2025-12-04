@@ -31,7 +31,8 @@ public class PlayerController : MonoBehaviour
     // -- MOVEMENT STATS --
     [Header("Movement")]
     [SerializeField] public float playerSpeed { get; private set; }
-    [HideInInspector] public Vector2 _moveDirection;
+    [SerializeField] public Vector2 _moveDirection;
+    public int facing;
 
     // -- JUMPING --
     [Header("Jumping")]
@@ -96,6 +97,9 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // flip
+
+
         playerStateMachine.currentState.UpdateLogic();
     }
 
@@ -121,9 +125,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnLightAttack(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && !isAttacking)
         {
-            //Debug.Log("ATTACK!!!");
             isAttacking = true;
             playerStateMachine.ChangeState(attacking, data.moves[0]);
         }
@@ -131,9 +134,10 @@ public class PlayerController : MonoBehaviour
 
     public void OnMediumAttack(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && !isAttacking)
         {
-            playerStateMachine.ChangeState(attacking);
+            isAttacking = true;
+            playerStateMachine.ChangeState(attacking, data.moves[1]);
         }
     }
 

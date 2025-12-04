@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 521df26d1a4044f458b9e856080f4441, type: 3}
   m_Name: light hitbox
   m_EditorClassIdentifier: 
-  offset: {x: 0.7, y: 0}
-  size: {x: 1, y: 0.5}
+  offset: {x: 0.85, y: 0}
+  size: {x: 0.8, y: 0.4}
   damage: 3
   knockBack: 3
   knockBackSpeed: 3

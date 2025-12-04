@@ -9,13 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15dd1430358ca2d45ba991aad45a4dee, type: 3}
-  m_Name: poke
+  m_Script: {fileID: 11500000, guid: 521df26d1a4044f458b9e856080f4441, type: 3}
+  m_Name: punch hitbox 1
   m_EditorClassIdentifier: 
-  moveName: poke
-  type: Light
-  startup: 1
-  active: 3
-  recovery: 3
-  hitboxes:
-  - {fileID: 11400000, guid: bd6ef63ac11d02342b2d9fe76797c542, type: 2}
+  offset: {x: 0.7, y: 0}
+  size: {x: 0.9, y: 0.6}
+  damage: 5
+  knockBack: 5
+  knockBackSpeed: 5
+  knockBackAngle: 0

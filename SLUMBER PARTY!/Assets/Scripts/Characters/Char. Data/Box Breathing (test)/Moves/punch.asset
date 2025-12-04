@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 15dd1430358ca2d45ba991aad45a4dee, type: 3}
-  m_Name: poke
+  m_Name: punch
   m_EditorClassIdentifier: 
-  moveName: poke
-  type: Light
-  startup: 1
-  active: 3
-  recovery: 3
+  moveName: punch
+  type: Medium
+  startup: 3
+  active: 5
+  recovery: 4
   hitboxes:
-  - {fileID: 11400000, guid: bd6ef63ac11d02342b2d9fe76797c542, type: 2}
+  - {fileID: 11400000, guid: 2d16ea0280dc4a741860c9e2d3b947b8, type: 2}

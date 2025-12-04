@@ -924,6 +924,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1712193627}
+  - {fileID: 1887451631}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1210743242
@@ -945,6 +946,7 @@ MonoBehaviour:
   m_input: {fileID: -9145567048923199588, guid: b87ac735a5cb13f45b314e6c621d4e67, type: 3}
   _animator: {fileID: 0}
   _moveDirection: {x: 0, y: 0}
+  facing: 0
   jumpPressed: 0
   maxFallSpeed: 45
   fallThroughDuration: 0.3
@@ -1038,8 +1040,40 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: c4ad2a98-82ea-415a-b5f0-80ed9cf63166
     m_ActionName: 'Player (Keyboard)/Attack[/Keyboard/h]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1210743242}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnMediumAttack
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: d00a0059-fd7e-442e-9690-77b12234b975
+    m_ActionName: 'Player (Keyboard)/Med. Attack[/Keyboard/j]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1210743242}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnHeavyAttack
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 9ceb40d0-065e-4b6f-bd50-5414e5f68f6d
+    m_ActionName: 'Player (Keyboard)/Heavy Attack[/Keyboard/b]'
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
+  m_DefaultControlScheme: PC
   m_DefaultActionMap: Player (Keyboard)
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
@@ -1220,6 +1254,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3494447798832634530, guid: b698329845a40764282f9f99410abcfb, type: 3}
   m_PrefabInstance: {fileID: 918357823}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1887451630
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1887451631}
+  m_Layer: 3
+  m_Name: HURTBOXES
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1887451631
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1887451630}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1210743241}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1908773690
 GameObject:
   m_ObjectHideFlags: 0
