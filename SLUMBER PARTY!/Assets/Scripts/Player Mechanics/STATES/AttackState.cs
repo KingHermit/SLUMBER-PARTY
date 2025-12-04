@@ -15,6 +15,7 @@ public class AttackState : PlayerState
     private float endTime;
 
     private List<HitboxController> activeHitboxes = new List<HitboxController>();
+    private Dictionary<HitboxData, bool> spawned = new Dictionary<HitboxData, bool>();
 
     public AttackState(PlayerController player, PlayerStateMachine stateMachine)
         : base(player, stateMachine) { }
@@ -25,60 +26,62 @@ public class AttackState : PlayerState
     }
 
     // Called ONCE when entering the state
-    public override void Enter() {
+    public override void Enter()
+    {
+        player.isAttacking = true;
         // start animation by startup
         player._animator.SetBool("isAttacking", true);
 
-        timer = 0;
+        foreach (var h in m_MoveData.hitboxes)
+            spawned[h] = false;
+
         start = FrameToSeconds(m_MoveData.startup);
         active = FrameToSeconds(m_MoveData.active);
         recovery = FrameToSeconds(m_MoveData.recovery);
         endTime = start + active + recovery;
 
-        Debug.Log($"Attacking: {m_MoveData.moveName}, duration ~= {endTime} seconds, active hitboxes = {m_MoveData.active}");
+        Debug.Log($"Attacking: {m_MoveData.moveName}, duration ~= {endTime} seconds, active hitboxes = {m_MoveData.hitboxes.Length}");
+
+        timer = 0;
     }
 
     // Called ONCE when exiting the state
-    public override void Exit() {
+    public override void Exit()
+    {
+        Debug.Log("BYE! I'm done");
+        player.isAttacking = false;
+        timer = 0;
         // exit once animation / recovery frames finish
-        DestroyHitboxes(); // juuuuust in case
         player._animator.SetBool("isAttacking", false);
     }
 
     // Called every frame
-    public override void UpdateLogic() {
+    public override void UpdateLogic()
+    {
         // see which other attacks are chainable?
         // apply damage..? oh man i'd have to keep track of hitboxes too
         timer += Time.deltaTime;
 
-        // SpawnHitboxes(); // testicles
-
-        // startup -> active
+        // startup -> active (Enter Active Frame Duration)
         if (timer >= start && timer < start + active)
         {
             if (activeHitboxes.Count == 0)
             {
                 SpawnHitboxes();
+                return;
             }
-        }
-
-        // active -> recovery frames
-        else if (timer >= start + active && activeHitboxes.Count > 0)
-        {
-            Debug.Log("In recovery");
-            DestroyHitboxes();
+            DespawnHitboxes(); // self-explanatory
         }
 
         if (timer >= endTime)
         {
-            player.isAttacking = false;
             if (!player.isGrounded())
             {
                 stateMachine.ChangeState(player.falling);
                 return;
-            } else
+            }
+            else
             {
-                Debug.Log("Okay I'm done");
                 stateMachine.ChangeState(player.idle);
                 return;
             }
@@ -86,35 +89,67 @@ public class AttackState : PlayerState
     }
 
     // Called every physics frame
-    public override void UpdatePhysics() {
+    public override void UpdatePhysics()
+    {
         // check if current frame is an active frame
         //   apply appropriate knockback + angle
+
+        // slightly halt movement while attacking
+        player.rb.linearVelocity = new Vector2(
+            player._moveDirection.x * (player.playerSpeed * 0.4f),
+            player.rb.linearVelocity.y
+        );
     }
 
-    float FrameToSeconds(int frames)
+    public float GetActiveFrames()
     {
-        return frames / 24f;
+        return active;
     }
+
+    float FrameToSeconds(int frames) { return frames / 24f; }
 
     private void SpawnHitboxes()
     {
-        foreach (var h in m_MoveData.hitboxes)
+        // for each hitbox in MoveData.hitboxes, add hitbox to activeHitboxes when timer (float) = HitboxData.startFrame
+        for (int i = 0; i < m_MoveData.hitboxes.Length; i++)
         {
-            GameObject obj = GameObject.Instantiate(player.hitboxPrefab);
-            obj.transform.SetParent(player.hitboxParent); // <-- key difference
+            var hb = m_MoveData.hitboxes[i];
+            float startTime = start + FrameToSeconds(hb.startFrame);
 
-            var controller = obj.GetComponent<HitboxController>();
-            controller.Setup(h, player);
+            if (spawned[hb]) { continue; } // avoid re-adding hitbox
 
-            activeHitboxes.Add(controller);
+            if (!spawned[hb] && timer >= startTime) // if current frame is hitbox's startFrame, instantiate
+            {
+                spawned[hb] = true;
+
+                Debug.Log($"[SPAWN]: {hb.name} at {timer}"); // second punch hitbox never instantiates
+
+                GameObject hitbox = GameObject.Instantiate(hb.HitboxPrefab); // create hitbox item
+                hitbox.transform.SetParent(player.hitboxParent);
+                var hb_controller = hitbox.GetComponent<HitboxController>();
+
+                hb_controller.Setup(hb, player); // apply HitboxData to hitbox item
+                activeHitboxes.Add(hb_controller);
+            }
         }
     }
 
-    private void DestroyHitboxes()
+    private void DespawnHitboxes()
     {
-        foreach (var h in activeHitboxes)
-            GameObject.Destroy(h.gameObject);
+        for (int i = activeHitboxes.Count - 1; i >= 0; i--)
+        {
+            var hb = activeHitboxes[i];
+            float endTime = start + FrameToSeconds(hb.data.endFrame);
 
-        activeHitboxes.Clear();
+            if (timer >= endTime)
+            {
+                Debug.Log($"[DESPAWN] {hb.data.name} at {timer}");
+
+                hb.Disable();
+                GameObject.Destroy(hb.gameObject);
+
+                activeHitboxes.RemoveAt(i);
+            }
+        }
     }
 }

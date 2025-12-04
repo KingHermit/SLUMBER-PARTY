@@ -43,6 +43,7 @@ public class IdleState : PlayerState
         {
             player.isAttacking = false;
             stateMachine.ChangeState(player.attacking);
+            return;
         }
     }
 

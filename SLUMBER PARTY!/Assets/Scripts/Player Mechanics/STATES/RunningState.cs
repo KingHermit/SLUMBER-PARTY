@@ -38,6 +38,13 @@ public class RunningState : PlayerState
             stateMachine.ChangeState(player.falling);
             return;
         }
+
+        if (player.isAttacking)
+        {
+            player.isAttacking = false;
+            stateMachine.ChangeState(player.attacking);
+            return;
+        }
     }
 
     // Called every physics frame

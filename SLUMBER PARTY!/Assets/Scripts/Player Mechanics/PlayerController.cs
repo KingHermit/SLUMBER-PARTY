@@ -12,10 +12,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private CharacterData data;
     private PlayerStateMachine playerStateMachine;
     public Transform hitboxParent;
-    public GameObject hitboxPrefab;
+    //public GameObject hitboxPrefab;
 
     // -- COMPONENTS --
-    // private BoxCollider2D b_collider;
     [HideInInspector] public Rigidbody2D rb;
     public InputActionReference m_input;
     public Animator _animator;
@@ -59,7 +58,7 @@ public class PlayerController : MonoBehaviour
 
         playerStateMachine = new PlayerStateMachine();
         hitboxParent = transform.Find("HITBOXES");
-        hitboxPrefab = Resources.Load<GameObject>("hitbox");
+        // hitboxPrefab = Resources.Load<GameObject>("hitbox");
 
         idle = new IdleState(this, playerStateMachine);
         running = new RunningState(this, playerStateMachine);
@@ -98,7 +97,11 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         // flip
-
+        if (_moveDirection.x != 0)
+        {
+            facing = (int)_moveDirection.x;
+        }
+        hitboxParent.transform.localScale = new Vector3(facing, 1f, 1f);
 
         playerStateMachine.currentState.UpdateLogic();
     }
@@ -106,6 +109,10 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         playerStateMachine.currentState.UpdatePhysics();
+    }
+    public CharacterData GetCharData()
+    {
+        return data;
     }
 
     public bool isGrounded()

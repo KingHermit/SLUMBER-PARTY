@@ -21,6 +21,14 @@ public class FallingState : PlayerState
         if (player.isGrounded() && player._moveDirection.x == 0 && !player.fallingThrough)
         {
             stateMachine.ChangeState(player.idle);
+            return;
+        }
+
+        if (player.isAttacking)
+        {
+            player.isAttacking = false;
+            stateMachine.ChangeState(player.attacking);
+            return;
         }
     }
 

@@ -5,6 +5,8 @@ public class MoveData : ScriptableObject
 {
     public string moveName;
     public string type; // Light, Medium, Heavy, SPECIAL
+
+    [Header("Frames")]
     public int startup;
     public int active;
     public int recovery;

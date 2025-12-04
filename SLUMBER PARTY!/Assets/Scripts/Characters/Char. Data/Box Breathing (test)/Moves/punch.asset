@@ -19,3 +19,4 @@ MonoBehaviour:
   recovery: 4
   hitboxes:
   - {fileID: 11400000, guid: 2d16ea0280dc4a741860c9e2d3b947b8, type: 2}
+  - {fileID: 11400000, guid: 62a9e3554336a5246a7439446381f8ef, type: 2}

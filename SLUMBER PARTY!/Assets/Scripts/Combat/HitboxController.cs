@@ -6,13 +6,11 @@ public class HitboxController : MonoBehaviour
     public PlayerController owner; // who spawned the hitbox
     private BoxCollider2D box;
 
-    private bool active;
-
     private Vector2 localOffset;
 
     void Awake()
     {
-        box = GetComponent<BoxCollider2D>();
+        box = GetComponentInChildren<BoxCollider2D>();
         box.enabled = false; // start disabled
     }
 
@@ -22,17 +20,18 @@ public class HitboxController : MonoBehaviour
         owner = creator;
 
         // Store the local offset so Update() can reposition it every frame
-        localOffset = hitboxData.offset;
+        localOffset = hitboxData.offset * owner.facing;
+
 
         // Set collider size
         box.size = hitboxData.size;
-
-        // Activate
-        active = true;
-        box.enabled = true;
+        box.offset = hitboxData.offset;
 
         // Snap to initial position
-        transform.position = owner.transform.position + (Vector3)localOffset;
+        Vector3 placedLocal = new Vector3(localOffset.x * owner.facing, localOffset.y, 0f);
+        transform.localPosition = placedLocal;
+
+        Enable();
     }
 
     void Update()
@@ -40,7 +39,22 @@ public class HitboxController : MonoBehaviour
         if (!active) return;
 
         // Make the hitbox follow the player (disjoint or attached)
-        transform.position = owner.transform.position + (Vector3)localOffset;
+        transform.localPosition = new Vector3(localOffset.x * owner.facing, localOffset.y, 0f);
+    }
+
+    private bool active;
+    private void Enable()
+    {
+        // Activate
+        active = true;
+        box.enabled = true;
+    }
+
+    public void Disable()
+    {
+        // De-activate
+        active = false;
+        box.enabled = false;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -56,5 +70,13 @@ public class HitboxController : MonoBehaviour
         //    hurtbox.TakeHit(data, owner);
         //    Disable();
         //}
+    }
+    void OnDrawGizmos()
+    {
+        if (box == null) box = GetComponent<BoxCollider2D>();
+
+        Gizmos.color = new Color(1f, 0f, 0f, 0.35f);
+        Gizmos.DrawWireCube(transform.position, box.size);
+        Gizmos.DrawCube(transform.position, box.size);
     }
 }

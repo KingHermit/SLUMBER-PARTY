@@ -16,6 +16,6 @@ MonoBehaviour:
   type: Light
   startup: 1
   active: 3
-  recovery: 3
+  recovery: 1
   hitboxes:
   - {fileID: 11400000, guid: bd6ef63ac11d02342b2d9fe76797c542, type: 2}

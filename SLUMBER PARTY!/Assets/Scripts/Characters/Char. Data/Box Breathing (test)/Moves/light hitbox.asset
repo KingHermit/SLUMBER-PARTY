@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 521df26d1a4044f458b9e856080f4441, type: 3}
   m_Name: light hitbox
   m_EditorClassIdentifier: 
+  HitboxPrefab: {fileID: 7772521714874919871, guid: 9b2f24c172e74924ab735f0d294d75a3, type: 3}
   offset: {x: 0.85, y: 0}
   size: {x: 0.8, y: 0.4}
+  startFrame: 0
+  endFrame: 2
   damage: 3
   knockBack: 3
   knockBackSpeed: 3
