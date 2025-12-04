@@ -8,8 +8,8 @@
 - [X] Phasing through platforms 
 
 **COMBAT**
-- [ ] Implement hitting
-  - [ ] Hit controls / logic
-  - [ ] Hitbox, hit 'existence' duration
-  - [ ] Hit damage
+- [X] Implement hitting
+  - [X] Hit controls / logic
+  - [X] Hitbox, hit 'existence' duration
+  - [X] Hit damage
 - [ ] Implement being hit / receiving
