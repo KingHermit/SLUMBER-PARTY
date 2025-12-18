@@ -1,73 +1,76 @@
 using UnityEngine;
 
-public class HitboxController : MonoBehaviour
+namespace Combat
 {
-    public HitboxData data;        // stores damage, size, angle, etc.
-    public PlayerController owner; // who spawned the hitbox
-    private BoxCollider2D box;
-
-    private Vector2 localOffset;
-
-    void Awake()
+    public class HitboxController : MonoBehaviour
     {
-        box = GetComponentInChildren<BoxCollider2D>();
-        box.enabled = false; // start disabled
-    }
+        public HitboxData data;        // stores damage, size, angle, etc.
+        public PlayerController owner; // who spawned the hitbox
+        private BoxCollider2D box;
 
-    public void Setup(HitboxData hitboxData, PlayerController creator)
-    {
-        data = hitboxData;
-        owner = creator;
+        private Vector2 localOffset;
 
-        // Store the local offset so Update() can reposition it every frame
-        localOffset = hitboxData.offset * owner.facing;
+        void Awake()
+        {
+            box = GetComponentInChildren<BoxCollider2D>();
+            box.enabled = false; // start disabled
+        }
+
+        public void Setup(HitboxData hitboxData, PlayerController creator)
+        {
+            data = hitboxData;
+            owner = creator;
+
+            // Store the local offset so Update() can reposition it every frame
+            localOffset = hitboxData.offset * owner.facing;
 
 
-        // Set collider size
-        box.size = hitboxData.size;
-        box.offset = hitboxData.offset;
+            // Set collider size
+            box.size = hitboxData.size;
+            box.offset = hitboxData.offset;
 
-        // Snap to initial position
-        Vector3 placedLocal = new Vector3(localOffset.x * owner.facing, localOffset.y * owner.facing, 0f);
-        transform.localPosition = placedLocal;
+            // Snap to initial position
+            Vector3 placedLocal = new Vector3(localOffset.x * owner.facing, localOffset.y * owner.facing, 0f);
+            transform.localPosition = placedLocal;
 
-        Enable();
-    }
+            Enable();
+        }
 
-    void Update()
-    {
-        if (!active) return;
+        void Update()
+        {
+            if (!active) return;
 
-        // Make the hitbox follow the player (disjoint or attached)
-        transform.localPosition = new Vector3(localOffset.x * owner.facing, localOffset.y * owner.facing, 0f);
-    }
+            // Make the hitbox follow the player (disjoint or attached)
+            transform.localPosition = new Vector3(localOffset.x * owner.facing, localOffset.y * owner.facing, 0f);
+        }
 
-    private bool active;
-    private void Enable()
-    {
-        // Activate
-        active = true;
-        box.enabled = true;
-    }
+        private bool active;
+        private void Enable()
+        {
+            // Activate
+            active = true;
+            box.enabled = true;
+        }
 
-    public void Disable()
-    {
-        // De-activate
-        active = false;
-        box.enabled = false;
-    }
+        public void Disable()
+        {
+            // De-activate
+            active = false;
+            box.enabled = false;
+        }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (!active) return;
-    }
+        void OnTriggerEnter2D(Collider2D other)
+        {
+            if (!active) return;
+        }
 
-    void OnDrawGizmos()
-    {
-        if (box == null) box = GetComponent<BoxCollider2D>();
+        void OnDrawGizmos()
+        {
+            if (box == null) box = GetComponent<BoxCollider2D>();
 
-        Gizmos.color = new Color(1f, 0f, 0f, 0.35f);
-        Gizmos.DrawWireCube(transform.position, box.size);
-        Gizmos.DrawCube(transform.position, box.size);
+            Gizmos.color = new Color(1f, 0f, 0f, 0.35f);
+            Gizmos.DrawWireCube(transform.position, box.size);
+            Gizmos.DrawCube(transform.position, box.size);
+        }
     }
 }

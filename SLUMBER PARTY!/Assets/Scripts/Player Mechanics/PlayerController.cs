@@ -4,6 +4,7 @@ using System.Collections;
 using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Combat;
 using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class PlayerController : MonoBehaviour
@@ -11,35 +12,35 @@ public class PlayerController : MonoBehaviour
     // -- CHARACTER DATA --
     [SerializeField] private CharacterData data;
     private PlayerStateMachine playerStateMachine;
-    public Transform hitboxParent;
+    [SerializeField] public Transform hitboxParent;
 
     [Header("STATS")]
-    public float health { get; private set; }
+    [SerializeField] public float health { get; private set; }
 
     // -- COMPONENTS --
     [HideInInspector] public Rigidbody2D rb;
-    public InputActionReference m_input;
-    public Animator _animator;
+    [SerializeField] public InputActionReference m_input;
+    [SerializeField] public Animator _animator;
 
     // -- PLAYER STATES --
-    public IdleState idle;
-    public RunningState running;
-    public JumpingState jumping;
-    public FallingState falling;
-    public AttackState attacking;
-    public HitstunState stunned;
+    [SerializeField] public IdleState idle;
+    [SerializeField] public RunningState running;
+    [SerializeField] public JumpingState jumping;
+    [SerializeField] public FallingState falling;
+    [SerializeField] public AttackState attacking;
+    [SerializeField] public HitstunState stunned;
 
     // -- MOVEMENT STATS --
     [Header("Movement")]
-    public float playerSpeed { get; private set; }
-    public Vector2 _moveDirection {  get; private set; }
-    public int facing { get; private set; }
+    [SerializeField] public float playerSpeed { get; private set; }
+    [SerializeField] public Vector2 _moveDirection {  get; private set; }
+    [SerializeField] public int facing { get; private set; }
 
     // -- JUMPING --
     [Header("Jumping")]
     [HideInInspector] public bool jumpPressed;
     [SerializeField] public float jumpForce { get; private set; }
-    public float maxFallSpeed = 45;
+    [SerializeField] public float maxFallSpeed = 45;
 
     // -- GROUND CHECKING --
     [Header("Ground Check")]
@@ -50,8 +51,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float fallThroughDuration = 0.3f;
 
     // -- BOOLEANS --
-    public bool isAttacking;
-    public bool fallingThrough { get; private set; }
+    [SerializeField] public bool isAttacking;
+    [SerializeField] public bool fallingThrough { get; private set; }
 
     private void Awake()
     {
@@ -63,7 +64,6 @@ public class PlayerController : MonoBehaviour
 
         playerStateMachine = new PlayerStateMachine();
         hitboxParent = transform.Find("HITBOXES");
-        // hitboxPrefab = Resources.Load<GameObject>("hitbox");
 
         idle = new IdleState(this, playerStateMachine);
         running = new RunningState(this, playerStateMachine);

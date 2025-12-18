@@ -13,6 +13,10 @@ public class HitboxData : ScriptableObject
     public int startFrame; // Relative to start of MoveData.ACTIVE
     public int endFrame;   // Relative to start of MoveData.ACTIVE
 
+    [Header("Hitstun")]
+    [Range(0f, 1f)]
+    public float hitstunDuration; 
+
     [Header("Damage")]
     public float damage;
 
