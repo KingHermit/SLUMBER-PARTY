@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class IdleState : PlayerState
+public class IdleState : CharacterState
 {
-    public IdleState(PlayerController player, PlayerStateMachine stateMachine)
-        : base(player, stateMachine) { }
+    public IdleState(CharacterController controller, CharacterStateMachine stateMachine)
+        : base(controller, stateMachine) { }
 
     // Called ONCE when entering the state
     public override void Enter() {
@@ -18,40 +18,25 @@ public class IdleState : PlayerState
     // Called every frame
     public override void UpdateLogic() {
         // Run Transition
-        if (Mathf.Abs(player._moveDirection.x) != 0 && player.isGrounded())
+        if (Mathf.Abs(controller.moveDirection.x) != 0 && controller.isGrounded())
         {
-            stateMachine.ChangeState(player.running);
-            return;
-        }
-
-        // Jump Transition
-        if (player.jumpPressed)
-        {
-            player.jumpPressed = false;
-            stateMachine.ChangeState(player.jumping);
+            controller.RequestRun(controller.moveDirection);
             return;
         }
 
         // Falling transition
-        if (!player.isGrounded())
+        if (!controller.isGrounded())
         {
-            stateMachine.ChangeState(player.falling);
-            return;
-        }
-
-        if (player.isAttacking) // erm
-        {
-            player.isAttacking = false;
-            stateMachine.ChangeState(player.attacking);
+            controller.RequestFall();
             return;
         }
     }
 
     // Called every physics frame
     public override void UpdatePhysics() {
-        player.rb.linearVelocity = new Vector2(
-        player._moveDirection.x,
-        player.rb.linearVelocity.y
+        controller.rb.linearVelocity = new Vector2(
+        controller.moveDirection.x,
+        controller.rb.linearVelocity.y
     );
     }
 }

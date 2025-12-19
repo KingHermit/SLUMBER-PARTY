@@ -5,7 +5,7 @@ namespace Combat
     public class HitboxController : MonoBehaviour
     {
         public HitboxData data;        // stores damage, size, angle, etc.
-        public PlayerController owner; // who spawned the hitbox
+        public CharacterController owner; // who spawned the hitbox
         private BoxCollider2D box;
 
         private Vector2 localOffset;
@@ -16,7 +16,7 @@ namespace Combat
             box.enabled = false; // start disabled
         }
 
-        public void Setup(HitboxData hitboxData, PlayerController creator)
+        public void Setup(HitboxData hitboxData, CharacterController creator)
         {
             data = hitboxData;
             owner = creator;

@@ -1,32 +1,32 @@
 using UnityEngine;
 
-public class JumpingState : PlayerState
+public class JumpingState : CharacterState
 {
-    public JumpingState(PlayerController player, PlayerStateMachine stateMachine)
-        : base(player, stateMachine) { }
+    public JumpingState(CharacterController controller, CharacterStateMachine stateMachine)
+        : base(controller, stateMachine) { }
 
     // Called ONCE when entering the state
     public override void Enter() {
-        player._animator.SetBool("isJumping", true);
+        controller.animator.SetBool("isJumping", true);
         Debug.Log("Current state: Jumping");
 
         // jump ONE time
-        player.rb.linearVelocity = new Vector2(
-            player.rb.linearVelocity.x,
-            player.jumpForce
+        controller.rb.linearVelocity = new Vector2(
+            controller.rb.linearVelocity.x,
+            controller.jumpForce
         );
     }
 
     // Called ONCE when exiting the state
     public override void Exit() {
-        player._animator.SetBool("isJumping", false);
+        controller.animator.SetBool("isJumping", false);
     }
 
     // Called every frame
     public override void UpdateLogic() {
-        if (player.rb.linearVelocityY < 0)
+        if (controller.rb.linearVelocityY < 0)
         {
-            stateMachine.ChangeState(player.falling);
+            controller.RequestFall();
             return;
         }
     }
@@ -34,9 +34,9 @@ public class JumpingState : PlayerState
     // Called every physics frame
     public override void UpdatePhysics() {
         // air horizontal control
-        player.rb.linearVelocity = new Vector2(
-            player._moveDirection.x * player.playerSpeed,
-            player.rb.linearVelocity.y // <-- LEAVE Y ALONE!!!
+        controller.rb.linearVelocity = new Vector2(
+            controller.moveDirection.x * controller.playerSpeed,
+            controller.rb.linearVelocity.y // <-- LEAVE Y ALONE!!!
         );
     }
 }

@@ -1,14 +1,14 @@
 using UnityEngine;
 
-public abstract class PlayerState
+public abstract class CharacterState
 {
-    protected PlayerController player;
-    protected PlayerStateMachine stateMachine;
+    protected CharacterController controller;
+    protected CharacterStateMachine stateMachine;
     protected MoveData move;
 
-    protected PlayerState(PlayerController player, PlayerStateMachine stateMachine)
+    protected CharacterState(CharacterController controller, CharacterStateMachine stateMachine)
     {
-        this.player = player;
+        this.controller = controller;
         this.stateMachine = stateMachine;
     }
 

@@ -1,57 +1,45 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class RunningState : PlayerState
+public class RunningState : CharacterState
 {
-    public RunningState(PlayerController player, PlayerStateMachine stateMachine)
-        : base(player, stateMachine) { }
+    public RunningState(CharacterController controller, CharacterStateMachine stateMachine)
+        : base(controller, stateMachine) { }
 
     // Called ONCE when entering the state
     public override void Enter() {
-        player._animator.SetBool("isRunning", true);
+        controller.animator.SetBool("isRunning", true);
         Debug.Log("Current state: Running");
     }
 
     // Called ONCE when exiting the state
     public override void Exit() {
-        player._animator.SetBool("isRunning", false);
+        controller.animator.SetBool("isRunning", false);
     }
 
     // Called every frame
     public override void UpdateLogic() {
 
-        if (player._moveDirection.x == 0 && player.isGrounded())
+        // Idle Transition
+        if (controller.moveDirection.x == 0)
         {
-            stateMachine.ChangeState(player.idle);
+            controller.RequestIdle();
             return;
         }
 
-        if (player.jumpPressed)
+        // Falling Transition
+        if (!controller.isGrounded())
         {
-            player.jumpPressed = false;
-            stateMachine.ChangeState(player.jumping);
-            return;
-        }
-
-        if (!player.isGrounded())
-        {
-            stateMachine.ChangeState(player.falling);
-            return;
-        }
-
-        if (player.isAttacking)
-        {
-            player.isAttacking = false;
-            stateMachine.ChangeState(player.attacking);
+            controller.RequestFall();
             return;
         }
     }
 
     // Called every physics frame
     public override void UpdatePhysics() {
-        player.rb.linearVelocity = new Vector2(
-        player._moveDirection.x * player.playerSpeed,
-        player.rb.linearVelocity.y
+        controller.rb.linearVelocity = new Vector2(
+        controller.moveDirection.x * controller.playerSpeed,
+        controller.rb.linearVelocity.y
     );
     }
 }

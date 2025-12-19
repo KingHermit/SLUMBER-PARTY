@@ -1,24 +1,24 @@
 using UnityEngine;
 
-public class PlayerStateMachine : MonoBehaviour
+public class CharacterStateMachine : MonoBehaviour
 {
-    public PlayerState currentState { get; private set; }
+    public CharacterState currentState { get; private set; }
 
 
-    public void Initialize(PlayerState startingState)
+    public void Initialize(CharacterState startingState)
     {
         currentState = startingState;
         startingState.Enter();
     }
 
-    public void ChangeState(PlayerState newState)
+    public void ChangeState(CharacterState newState)
     {
         currentState.Exit();
         currentState = newState;
         newState.Enter();
     }
 
-    public void ChangeState(PlayerState newState, MoveData move)
+    public void ChangeState(CharacterState newState, MoveData move)
     {
         currentState?.Exit();
         newState.SetMove(move);   // only AttackState will care about this

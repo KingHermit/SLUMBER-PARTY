@@ -817,7 +817,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1210743241}
   - component: {fileID: 1210743240}
-  - component: {fileID: 1210743242}
+  - component: {fileID: 1210743245}
   - component: {fileID: 1210743243}
   - component: {fileID: 1210743239}
   - component: {fileID: 1210743238}
@@ -974,27 +974,6 @@ Transform:
   - {fileID: 1887451631}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1210743242
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1210743237}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b05b292173eb3e14daeb1ad4f3c1b7eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 8004993b66d06d44c83d5d0750a0aad3, type: 2}
-  hitboxParent: {fileID: 0}
-  rb: {fileID: 0}
-  m_input: {fileID: -9145567048923199588, guid: b87ac735a5cb13f45b314e6c621d4e67, type: 3}
-  _animator: {fileID: 0}
-  jumpPressed: 0
-  maxFallSpeed: 45
-  fallThroughDuration: 0.3
-  isAttacking: 0
 --- !u!114 &1210743243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1022,7 +1001,7 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1210743242}
+      - m_Target: {fileID: 1210743245}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnMove
         m_Mode: 0
@@ -1038,7 +1017,7 @@ MonoBehaviour:
     m_ActionName: 'Player (Keyboard)/Run[/Keyboard/a,/Keyboard/d,/Keyboard/leftArrow,/Keyboard/rightArrow]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1210743242}
+      - m_Target: {fileID: 1210743245}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnJump
         m_Mode: 0
@@ -1054,7 +1033,7 @@ MonoBehaviour:
     m_ActionName: 'Player (Keyboard)/Jump[/Keyboard/w,/Keyboard/space]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1210743242}
+      - m_Target: {fileID: 1210743245}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnDrop
         m_Mode: 0
@@ -1070,7 +1049,7 @@ MonoBehaviour:
     m_ActionName: 'Player (Keyboard)/Drop[/Keyboard/s,/Keyboard/downArrow]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1210743242}
+      - m_Target: {fileID: 1210743245}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnLightAttack
         m_Mode: 0
@@ -1086,7 +1065,7 @@ MonoBehaviour:
     m_ActionName: 'Player (Keyboard)/Attack[/Keyboard/h]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1210743242}
+      - m_Target: {fileID: 1210743245}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnMediumAttack
         m_Mode: 0
@@ -1102,7 +1081,7 @@ MonoBehaviour:
     m_ActionName: 'Player (Keyboard)/Med. Attack[/Keyboard/j]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1210743242}
+      - m_Target: {fileID: 1210743245}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnHeavyAttack
         m_Mode: 0
@@ -1143,6 +1122,23 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1210743245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210743237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b05b292173eb3e14daeb1ad4f3c1b7eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: 8004993b66d06d44c83d5d0750a0aad3, type: 2}
+  m_input: {fileID: -9145567048923199588, guid: b87ac735a5cb13f45b314e6c621d4e67, type: 3}
+  jumpPressed: 0
+  maxFallSpeed: 45
+  fallThroughDuration: 0.3
 --- !u!1 &1374555602
 GameObject:
   m_ObjectHideFlags: 0
@@ -1234,7 +1230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e91543edb437c9146b481976fd6e4d26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: {fileID: 1210743242}
+  owner: {fileID: 0}
 --- !u!1 &1443284071
 GameObject:
   m_ObjectHideFlags: 0
@@ -1327,7 +1323,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e91543edb437c9146b481976fd6e4d26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: {fileID: 1210743242}
+  owner: {fileID: 0}
 --- !u!212 &1443284075
 SpriteRenderer:
   m_ObjectHideFlags: 0

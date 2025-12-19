@@ -1,87 +1,63 @@
+using Combat;
 using NUnit.Framework.Interfaces;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Combat;
+using UnityEngine.TextCore.Text;
 using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : CharacterController
 {
-    // -- CHARACTER DATA --
-    [SerializeField] private CharacterData data;
-    private PlayerStateMachine playerStateMachine;
-    [SerializeField] public Transform hitboxParent;
-
-    [Header("STATS")]
-    [SerializeField] public float health { get; private set; }
-
-    // -- COMPONENTS --
-    [HideInInspector] public Rigidbody2D rb;
     [SerializeField] public InputActionReference m_input;
-    [SerializeField] public Animator _animator;
 
     // -- PLAYER STATES --
-    [SerializeField] public IdleState idle;
-    [SerializeField] public RunningState running;
-    [SerializeField] public JumpingState jumping;
-    [SerializeField] public FallingState falling;
-    [SerializeField] public AttackState attacking;
-    [SerializeField] public HitstunState stunned;
+    [Header("States")]
+    public IdleState idle;
+    public RunningState running;
+    public JumpingState jumping;
+    public FallingState falling;
+    public AttackState attacking;
+    public HitstunState stunned;
 
     // -- MOVEMENT STATS --
     [Header("Movement")]
-    [SerializeField] public float playerSpeed { get; private set; }
-    [SerializeField] public Vector2 _moveDirection {  get; private set; }
-    [SerializeField] public int facing { get; private set; }
+    
 
     // -- JUMPING --
     [Header("Jumping")]
-    [HideInInspector] public bool jumpPressed;
-    [SerializeField] public float jumpForce { get; private set; }
-    [SerializeField] public float maxFallSpeed = 45;
+    
 
     // -- GROUND CHECKING --
     [Header("Ground Check")]
     private PlatformEffector2D effector;
 
-    // -- PHASING THROUGH --
-    [Header("Drop / Phase Through")]
-    [SerializeField] private float fallThroughDuration = 0.3f;
-
-    // -- BOOLEANS --
-    [SerializeField] public bool isAttacking;
-    [SerializeField] public bool fallingThrough { get; private set; }
-
-    private void Awake()
+    protected override void Awake()
     {
-        foreach (var hb in GetComponentsInChildren<HurtboxController>())
-            hb.owner = this; // set owner properly
+        base.Awake();
 
-        rb = GetComponent<Rigidbody2D>();
-        _animator = GetComponent<Animator>();
-
-        playerStateMachine = new PlayerStateMachine();
         hitboxParent = transform.Find("HITBOXES");
 
-        idle = new IdleState(this, playerStateMachine);
-        running = new RunningState(this, playerStateMachine);
-        jumping = new JumpingState(this, playerStateMachine);
-        falling = new FallingState(this, playerStateMachine);
-        attacking = new AttackState(this, playerStateMachine);
-        stunned = new HitstunState(this, playerStateMachine);
+        m_input.action.performed += OnMove;
+        m_input.action.canceled  += OnMove;
+
+        idle = new IdleState(this, stateMachine);
+        running = new RunningState(this, stateMachine);
+        jumping = new JumpingState(this, stateMachine);
+        falling = new FallingState(this, stateMachine);
+        attacking = new AttackState(this, stateMachine);
+        stunned = new HitstunState(this, stateMachine);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    protected override void Start()
     {
-        playerStateMachine.Initialize(idle);
-        Debug.Log("Character reporting for duty: " + data.name);
+        base.Start();
+        stateMachine.Initialize(idle);
 
-        health = data.maxHealth;
-        playerSpeed = data.speed;
-        jumpForce = data.jumpForce;
+        Debug.Log("Character reporting for duty: " + data.name);
     }
 
     private IEnumerator FallThroughPlatform()
@@ -99,33 +75,6 @@ public class PlayerController : MonoBehaviour
         fallingThrough = false;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        // flip
-        if (_moveDirection.x != 0)
-        {
-            facing = (int)_moveDirection.x;
-        }
-        hitboxParent.transform.localScale = new Vector3(facing, 1f, 1f);
-
-        playerStateMachine.currentState.UpdateLogic();
-    }
-
-    private void FixedUpdate()
-    {
-        playerStateMachine.currentState.UpdatePhysics();
-    }
-    public CharacterData GetCharData()
-    {
-        return data;
-    }
-
-    public bool isGrounded()
-    {
-        return Physics2D.Raycast(transform.position, Vector2.down, 1.2f, LayerMask.GetMask("Platforms"));
-    }
-
     private PlatformEffector2D GetCurrentPlatformEffector()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.2f, LayerMask.GetMask("Platforms"));
@@ -134,69 +83,97 @@ public class PlayerController : MonoBehaviour
         return null;
     }
 
-    public void OnHit(HitboxController hb)
+    // -- STATE INTENT --
+    #region STATE INTENT
+    public override void RequestIdle()
     {
-        // apply damage
-        health -= hb.data.damage;
-
-        // apply knockback
-        Vector2 kb = hb.data.direction.normalized * hb.data.knockbackForce;
-        kb.x *= hb.owner.facing; // flip
-        rb.linearVelocity = kb;
-
-        // enter hitstun state
-        playerStateMachine.ChangeState(stunned);
+        stateMachine.ChangeState(idle);
     }
 
-    // -- INPUT SYSTEM CALLBACKS --
+    public override void RequestRun(Vector2 direction)
+    {
+        moveDirection = direction;
 
+        if (!isGrounded()) { return; }
+
+        if (Mathf.Abs(moveDirection.x) > 0.01f)
+        {
+            stateMachine.ChangeState(running);
+        } else
+        {
+            RequestIdle();
+        }
+    }
+
+    public override void RequestJump()
+    {
+        if (!isGrounded()) { return; }
+        if (isAttacking) { return; }
+
+        stateMachine.ChangeState(jumping);
+    }
+
+    public override void RequestAttack(int moveIndex)
+    {
+        if (isAttacking) { return; }
+        // if (!isGrounded()) return; // optional rule
+
+        isAttacking = true;
+        stateMachine.ChangeState(attacking, data.moves[moveIndex]);
+    }
+
+    public override void RequestFall()
+    {
+        if (isGrounded()) { return; }
+        stateMachine.ChangeState(falling);
+    }
+
+    public override void RequestHitstun(HitboxData hb)
+    {
+        stateMachine.ChangeState(stunned);
+    }
+    #endregion STATE INTENT
+
+
+
+
+    // -- INPUT SYSTEM CALLBACKS --
+    #region INPUT SYSTEM CALLBACKS
     public void OnLightAttack(InputAction.CallbackContext context)
     {
-        if (context.performed && !isAttacking)
-        {
-            isAttacking = true;
-            playerStateMachine.ChangeState(attacking, data.moves[0]);
-        }
+        if (!context.performed) return;
+        RequestAttack(0);
     }
 
     public void OnMediumAttack(InputAction.CallbackContext context)
     {
-        if (context.performed && !isAttacking)
-        {
-            isAttacking = true;
-            playerStateMachine.ChangeState(attacking, data.moves[1]);
-        }
+        if (!context.performed) return;
+        RequestAttack(1);
     }
 
     public void OnHeavyAttack(InputAction.CallbackContext context)
     {
-        if (context.performed)
-        {
-            isAttacking = true;
-            playerStateMachine.ChangeState(attacking, data.moves[2]);
-        }
+        if (!context.performed) return;
+        RequestAttack(2);
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        _moveDirection = m_input.action.ReadValue<Vector2>();
-        if (isGrounded()) { playerStateMachine.ChangeState(running); }
+        Vector2 input = context.ReadValue<Vector2>();
+        RequestRun(input);
     }
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed && isGrounded())
-        {
-            playerStateMachine.ChangeState(jumping);
-        }
+        if (!context.performed) return;
+        RequestJump();
     }
 
     public void OnDrop(InputAction.CallbackContext context)
     {
-        if (context.performed && isGrounded())
-        {
-            playerStateMachine.ChangeState(falling);
-            StartCoroutine("FallThroughPlatform");
-        }
+        if (!context.performed) return;
+        StartCoroutine("FallThroughPlatform");
     }
+
+    #endregion INPUTSYSTEMCALLBACKS
 }

@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class HitstunState : PlayerState
+public class HitstunState : CharacterState
 {
-    public HitstunState(PlayerController player, PlayerStateMachine stateMachine)
-        : base(player, stateMachine) { }
+    public HitstunState(CharacterController controller, CharacterStateMachine stateMachine)
+        : base(controller, stateMachine) { }
 
     // Called ONCE when entering the state
     public override void Enter() {

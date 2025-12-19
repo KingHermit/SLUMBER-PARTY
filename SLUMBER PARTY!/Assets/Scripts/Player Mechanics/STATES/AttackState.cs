@@ -4,7 +4,7 @@ using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 using Combat;
 
-public class AttackState : PlayerState
+public class AttackState : CharacterState
 {
     // player's character data stores moves (MoveData scriptables) which contain everything from the move type down to the hitboxes. access that?
     private MoveData m_MoveData;
@@ -18,8 +18,8 @@ public class AttackState : PlayerState
     private List<HitboxController> activeHitboxes = new List<HitboxController>();
     private Dictionary<HitboxData, bool> spawned = new Dictionary<HitboxData, bool>();
 
-    public AttackState(PlayerController player, PlayerStateMachine stateMachine)
-        : base(player, stateMachine) { }
+    public AttackState(CharacterController controller, CharacterStateMachine stateMachine)
+        : base(controller, stateMachine) { }
 
     public override void SetMove(MoveData m)
     {
@@ -29,9 +29,10 @@ public class AttackState : PlayerState
     // Called ONCE when entering the state
     public override void Enter()
     {
-        player.isAttacking = true;
+        controller.setAttackTrue();
+
         // start animation by startup
-        player._animator.SetBool("isAttacking", true);
+        controller.animator.SetBool("isAttacking", true);
 
         foreach (var h in m_MoveData.hitboxes)
             spawned[h] = false;
@@ -49,10 +50,10 @@ public class AttackState : PlayerState
     // Called ONCE when exiting the state
     public override void Exit()
     {
-        player.isAttacking = false;
+        controller.setAttackFalse();
         timer = 0;
         // exit once animation / recovery frames finish
-        player._animator.SetBool("isAttacking", false);
+        controller.animator.SetBool("isAttacking", false);
     }
 
     // Called every frame
@@ -75,14 +76,14 @@ public class AttackState : PlayerState
 
         if (timer >= endTime)
         {
-            if (!player.isGrounded())
+            if (!controller.isGrounded())
             {
-                stateMachine.ChangeState(player.falling);
+                controller.RequestFall();
                 return;
             }
             else
             {
-                stateMachine.ChangeState(player.idle);
+                controller.RequestIdle();
                 return;
             }
         }
@@ -95,9 +96,9 @@ public class AttackState : PlayerState
         //   apply appropriate knockback + angle
 
         // slightly halt movement while attacking
-        player.rb.linearVelocity = new Vector2(
-            player._moveDirection.x * (player.playerSpeed * 0.4f), // 0.4f change per attack (light, heavy, medium maybe?)
-            player.rb.linearVelocity.y
+        controller.rb.linearVelocity = new Vector2(
+            controller.moveDirection.x * (controller.playerSpeed * 0.4f), // 0.4f change per attack (light, heavy, medium maybe?)
+            controller.rb.linearVelocity.y
         );
     }
 
@@ -125,10 +126,10 @@ public class AttackState : PlayerState
                 // Debug.Log($"[SPAWN]: {hb.name} at {timer}");
 
                 GameObject hitbox = GameObject.Instantiate(hb.HitboxPrefab); // create hitbox item
-                hitbox.transform.SetParent(player.hitboxParent);
+                hitbox.transform.SetParent(controller.hitboxParent);
                 var hb_controller = hitbox.GetComponent<HitboxController>();
 
-                hb_controller.Setup(hb, player); // apply HitboxData to hitbox item
+                hb_controller.Setup(hb, controller); // apply HitboxData to hitbox item
                 activeHitboxes.Add(hb_controller);
             }
         }
