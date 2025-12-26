@@ -27,7 +27,6 @@ namespace Combat
 
             // Set collider size
             box.size = hitboxData.size;
-            box.offset = hitboxData.offset;
 
             // Snap to initial position
             Vector3 placedLocal = new Vector3(localOffset.x * owner.facing, localOffset.y * owner.facing, 0f);
@@ -57,11 +56,6 @@ namespace Combat
             // De-activate
             active = false;
             box.enabled = false;
-        }
-
-        void OnTriggerEnter2D(Collider2D other)
-        {
-            if (!active) return;
         }
 
         void OnDrawGizmos()

@@ -87,6 +87,7 @@ public class PlayerController : CharacterController
     #region STATE INTENT
     public override void RequestIdle()
     {
+        if (isStunned) return;
         stateMachine.ChangeState(idle);
     }
 
@@ -94,6 +95,7 @@ public class PlayerController : CharacterController
     {
         moveDirection = direction;
 
+        if (isStunned) return;
         if (!isGrounded()) { return; }
 
         if (Mathf.Abs(moveDirection.x) > 0.01f)
@@ -107,6 +109,7 @@ public class PlayerController : CharacterController
 
     public override void RequestJump()
     {
+        if (isStunned) return;
         if (!isGrounded()) { return; }
         if (isAttacking) { return; }
 
@@ -115,6 +118,7 @@ public class PlayerController : CharacterController
 
     public override void RequestAttack(int moveIndex)
     {
+        if (isStunned) return;
         if (isAttacking) { return; }
         // if (!isGrounded()) return; // optional rule
 
@@ -124,12 +128,14 @@ public class PlayerController : CharacterController
 
     public override void RequestFall()
     {
+        if (isStunned) return;
         if (isGrounded()) { return; }
         stateMachine.ChangeState(falling);
     }
 
     public override void RequestHitstun(HitboxData hb)
     {
+        isStunned = true;
         stateMachine.ChangeState(stunned);
     }
     #endregion STATE INTENT
@@ -172,8 +178,16 @@ public class PlayerController : CharacterController
     public void OnDrop(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
-        StartCoroutine("FallThroughPlatform");
+
+        if (!fallingThrough)
+        {
+            StartCoroutine("FallThroughPlatform");
+        }
     }
 
     #endregion INPUTSYSTEMCALLBACKS
+
+    #region DAMAGE
+
+    #endregion DAMAGE
 }

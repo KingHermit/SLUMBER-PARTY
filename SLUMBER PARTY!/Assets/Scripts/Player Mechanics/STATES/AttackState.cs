@@ -42,7 +42,7 @@ public class AttackState : CharacterState
         recovery = FrameToSeconds(m_MoveData.recovery);
         endTime = start + active + recovery;
 
-        Debug.Log($"Attacking: {m_MoveData.moveName}, duration ~= {endTime} seconds, active hitboxes = {m_MoveData.hitboxes.Length}");
+        Debug.Log($"{controller.name} attacking: {m_MoveData.moveName}, duration ~= {endTime} seconds, active hitboxes = {m_MoveData.hitboxes.Length}");
 
         timer = 0;
     }

@@ -19,6 +19,8 @@ public abstract class CharacterController : MonoBehaviour
     // -- COMBAT --
     public Transform hitboxParent { get; protected set; }
     public bool isAttacking { get; protected set; } = false;
+    public bool isStunned { get; protected set; }
+    public float hitstunTimer { get; protected set; }
 
     // -- MOVEMENT --
     [SerializeField] public float playerSpeed { get; private set; }
@@ -56,6 +58,9 @@ public abstract class CharacterController : MonoBehaviour
         if (hitboxParent)
             hitboxParent.localScale = new Vector3(facing, 1, 1);
 
+        if (hitstunTimer > 0f)
+            hitstunTimer -= Time.deltaTime;
+
         stateMachine.currentState.UpdateLogic();
     }
 
@@ -87,33 +92,43 @@ public abstract class CharacterController : MonoBehaviour
     #endregion STATES
 
     #region DAMAGE
-    public virtual void setAttackTrue()
+    public virtual void setAttackTrue() // Only for PlayerController types
     {
         isAttacking = true;
     }
 
-    public virtual void setAttackFalse()
+    public virtual void setAttackFalse() // Only for PlayerController types
     {
         isAttacking = false;
     }
 
-    public virtual void OnHit(HitboxController hb)
+    public void ClearStun()
     {
+        isStunned = false;
+    }
+
+    public virtual void OnHit(HitboxController hb)
+    {   
         // apply damage
         health -= hb.data.damage;
 
-        ApplyKnockback(hb);
-
         // enter hitstun state
-        // stateMachine.ChangeState(stunned);
+        hitstunTimer = hb.data.hitstunDuration;
+        RequestHitstun(hb.data);
+
+        ApplyKnockback(hb);
     }
 
     public virtual void ApplyKnockback(HitboxController hb)
     {
-        Vector2 kb = hb.data.direction.normalized * hb.data.knockbackForce;
-        kb.x *= hb.owner.facing;
+        Debug.Log("GET LAUNCHED");
+        Vector2 dir = hb.data.direction.normalized;
 
-        rb.linearVelocity = kb;
+        dir.x *= hb.owner.facing;
+
+        Vector2 force = dir * hb.data.knockbackForce;
+
+        rb.linearVelocity = force;
     }
     #endregion DAMAGE
 }

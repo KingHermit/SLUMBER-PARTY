@@ -6,14 +6,19 @@ namespace Combat
 {
     public class HurtboxController : MonoBehaviour
     {
-        public MonoBehaviour owner;
+        public CharacterController owner;
         private BoxCollider2D box;
 
         private void Start()
         {
             box = GetComponent<BoxCollider2D>();
-            foreach (var hb in GetComponentsInChildren<HurtboxController>())
-                hb.owner = this; // set owner properly
+            box.isTrigger = true;
+
+            owner = GetComponentInParent<CharacterController>();
+
+            if (owner == null) {
+                Debug.LogError("Hurtbox has no CharacterController owner!", this);
+            }
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
@@ -22,19 +27,14 @@ namespace Combat
 
             if (hitbox == null)
             {
-                // Optional debug, kept safe
-                Debug.Log("Hurtbox collided with non-hitbox object.");
                 return;
             }
 
             if (hitbox.owner == owner) return; // don't hit yourself!!!
 
-            if (owner is PlayerController p)
-            {
-                p.OnHit(hitbox);
-            }
+            Debug.Log($"{owner.name} Hurtbox hit by hitbox: {hitbox.data.name}");
 
-            Debug.Log($"Hurtbox hit by hitbox: {hitbox.data.name}");
+            owner.OnHit(hitbox);
         }
 
         void OnDrawGizmos()

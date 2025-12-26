@@ -8,7 +8,6 @@ public class JumpingState : CharacterState
     // Called ONCE when entering the state
     public override void Enter() {
         controller.animator.SetBool("isJumping", true);
-        Debug.Log("Current state: Jumping");
 
         // jump ONE time
         controller.rb.linearVelocity = new Vector2(

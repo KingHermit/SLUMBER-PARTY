@@ -7,7 +7,7 @@ public class IdleState : CharacterState
 
     // Called ONCE when entering the state
     public override void Enter() {
-        Debug.Log("Current state: Idle");
+        Debug.Log($"{controller.name} current state: Idle");
     }
 
     // Called ONCE when exiting the state
@@ -18,6 +18,9 @@ public class IdleState : CharacterState
     // Called every frame
     public override void UpdateLogic() {
         // Run Transition
+        if (controller.isStunned)
+            return;
+
         if (Mathf.Abs(controller.moveDirection.x) != 0 && controller.isGrounded())
         {
             controller.RequestRun(controller.moveDirection);

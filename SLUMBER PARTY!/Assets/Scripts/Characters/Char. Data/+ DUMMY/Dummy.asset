@@ -18,5 +18,5 @@ MonoBehaviour:
   speed: 0
   jumpForce: 0
   maxHealth: 100000000
-  animatorController: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: 03b535069b7c273458f080afa525be0b, type: 2}
   moves: []

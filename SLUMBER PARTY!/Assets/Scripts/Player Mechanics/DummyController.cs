@@ -40,11 +40,11 @@ public class DummyController : CharacterController
     }
     #endregion STATE INTENT
 
+    #region DAMAGE
     public override void ApplyKnockback(HitboxController hb)
     {
         base.ApplyKnockback(hb);
-        Debug.Log("Dummy launched!");
     }
+    #endregion DAMAGE
 
-    
 }

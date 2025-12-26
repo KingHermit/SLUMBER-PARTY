@@ -8,7 +8,7 @@ public class FallingState : CharacterState
     // Called ONCE when entering the state
     public override void Enter() {
         controller.animator.SetBool("isFalling", true);
-        Debug.Log("Current State: Falling");
+        Debug.Log($"{controller.name} current State: Falling");
     }
 
     // Called ONCE when exiting the state
