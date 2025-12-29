@@ -17,6 +17,7 @@ MonoBehaviour:
   size: {x: 1, y: 0.7}
   startFrame: 1
   endFrame: 3
+  hitstunDuration: 1
   damage: 5
-  direction: {x: 0, y: 0}
-  knockbackForce: 2
+  direction: {x: 3, y: 0}
+  knockbackForce: 3

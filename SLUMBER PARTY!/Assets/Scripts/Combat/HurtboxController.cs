@@ -1,5 +1,5 @@
 using UnityEngine;
-using Combat;
+using Environment;
 using UnityEngine.UIElements;
 
 namespace Combat
@@ -32,9 +32,8 @@ namespace Combat
 
             if (hitbox.owner == owner) return; // don't hit yourself!!!
 
-            Debug.Log($"{owner.name} Hurtbox hit by hitbox: {hitbox.data.name}");
-
             owner.OnHit(hitbox);
+            FindAnyObjectByType<Hitstop>().Stop(0.1f);
         }
 
         void OnDrawGizmos()

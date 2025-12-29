@@ -11,7 +11,6 @@ public class DummyController : CharacterController
     {
         base.Awake();
 
-        // TODO: Make sure CharacterState constructor takes in a plain CharacterController, not PlayerController!
         idle = new IdleState(this, stateMachine);
         stunned = new HitstunState(this, stateMachine);
         falling = new FallingState(this, stateMachine);

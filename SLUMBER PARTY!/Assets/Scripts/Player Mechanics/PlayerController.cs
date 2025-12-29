@@ -22,15 +22,6 @@ public class PlayerController : CharacterController
     public AttackState attacking;
     public HitstunState stunned;
 
-    // -- MOVEMENT STATS --
-    [Header("Movement")]
-    
-
-    // -- JUMPING --
-    [Header("Jumping")]
-    
-
-    // -- GROUND CHECKING --
     [Header("Ground Check")]
     private PlatformEffector2D effector;
 

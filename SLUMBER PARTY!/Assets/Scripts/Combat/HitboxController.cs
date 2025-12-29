@@ -24,7 +24,6 @@ namespace Combat
             // Store the local offset so Update() can reposition it every frame
             localOffset = hitboxData.offset * owner.facing;
 
-
             // Set collider size
             box.size = hitboxData.size;
 
