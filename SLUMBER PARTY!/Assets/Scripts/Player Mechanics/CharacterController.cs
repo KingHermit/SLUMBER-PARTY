@@ -59,7 +59,13 @@ public abstract class CharacterController : MonoBehaviour
             hitboxParent.localScale = new Vector3(facing, 1, 1);
 
         if (hitstunTimer > 0f)
+        {
             hitstunTimer -= Time.deltaTime;
+            isStunned = true;
+        } else
+        {
+            isStunned = false;
+        }
 
         stateMachine.currentState.UpdateLogic();
     }
@@ -114,9 +120,9 @@ public abstract class CharacterController : MonoBehaviour
 
         // enter hitstun state
         hitstunTimer = hb.data.hitstunDuration;
-        RequestHitstun(hb.data);
 
         ApplyKnockback(hb);
+        RequestHitstun(hb.data);
     }
 
     public virtual void ApplyKnockback(HitboxController hb)

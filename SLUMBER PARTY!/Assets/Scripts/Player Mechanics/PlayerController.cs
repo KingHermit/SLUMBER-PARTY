@@ -135,7 +135,6 @@ public class PlayerController : CharacterController
 
     public override void RequestHitstun(HitboxData hb)
     {
-        isStunned = true;
         stateMachine.ChangeState(stunned);
     }
     #endregion STATE INTENT

@@ -18,9 +18,6 @@ public class IdleState : CharacterState
     // Called every frame
     public override void UpdateLogic() {
         // Run Transition
-        if (controller.isStunned)
-            return;
-
         if (Mathf.Abs(controller.moveDirection.x) != 0 && controller.isGrounded())
         {
             controller.RequestRun(controller.moveDirection);
