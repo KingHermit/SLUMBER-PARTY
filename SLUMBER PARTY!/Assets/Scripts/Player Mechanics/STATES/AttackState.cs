@@ -50,8 +50,10 @@ public class AttackState : CharacterState
     // Called ONCE when exiting the state
     public override void Exit()
     {
+        DespawnHitboxes(); // Just in case
         controller.setAttackFalse();
         timer = 0;
+
         // exit once animation / recovery frames finish
         controller.animator.SetBool("isAttacking", false);
     }
@@ -123,7 +125,7 @@ public class AttackState : CharacterState
             {
                 spawned[hb] = true;
 
-                // Debug.Log($"[SPAWN]: {hb.name} at {timer}");
+                Debug.Log($"[SPAWN]: {hb.name} at {timer}");
 
                 GameObject hitbox = GameObject.Instantiate(hb.HitboxPrefab); // create hitbox item
                 hitbox.transform.SetParent(controller.hitboxParent);
@@ -144,7 +146,7 @@ public class AttackState : CharacterState
 
             if (timer >= endTime)
             {
-                // Debug.Log($"[DESPAWN] {hb.data.name} at {timer}");
+                Debug.Log($"[DESPAWN] {hb.data.name} at {timer}");
 
                 hb.Disable();
                 GameObject.Destroy(hb.gameObject);

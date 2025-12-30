@@ -14,6 +14,8 @@ public class JumpingState : CharacterState
             controller.rb.linearVelocity.x,
             controller.jumpForce
         );
+
+        // Debug.Log($"{controller.name} current State: Jumping");
     }
 
     // Called ONCE when exiting the state

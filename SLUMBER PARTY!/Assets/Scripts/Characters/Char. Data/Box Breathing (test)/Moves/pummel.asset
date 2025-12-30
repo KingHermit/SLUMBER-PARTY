@@ -15,7 +15,7 @@ MonoBehaviour:
   moveName: pummel
   type: Heavy
   startup: 5
-  active: 10
+  active: 11
   recovery: 4
   hitboxes:
   - {fileID: 11400000, guid: 1b6b109bde142e24db57b1cc16141d7a, type: 2}

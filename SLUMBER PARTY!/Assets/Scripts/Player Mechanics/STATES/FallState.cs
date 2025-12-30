@@ -8,7 +8,7 @@ public class FallingState : CharacterState
     // Called ONCE when entering the state
     public override void Enter() {
         controller.animator.SetBool("isFalling", true);
-        Debug.Log($"{controller.name} current State: Falling");
+        // Debug.Log($"{controller.name} current State: Falling");
     }
 
     // Called ONCE when exiting the state
@@ -18,7 +18,7 @@ public class FallingState : CharacterState
 
     // Called every frame
     public override void UpdateLogic() {
-        if (controller.isGrounded() && controller.moveDirection.x < 0.01f)
+        if (controller.isGrounded())
         {
             controller.RequestIdle();
             return;

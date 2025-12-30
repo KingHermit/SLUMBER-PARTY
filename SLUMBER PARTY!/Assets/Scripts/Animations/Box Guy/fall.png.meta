@@ -135,7 +135,7 @@ TextureImporter:
       name: fall_0
       rect:
         serializedVersion: 2
-        x: 18
+        x: 10
         y: 0
         width: 186
         height: 290
@@ -157,7 +157,7 @@ TextureImporter:
       name: fall_1
       rect:
         serializedVersion: 2
-        x: 315
+        x: 310
         y: 0
         width: 186
         height: 290
@@ -179,7 +179,7 @@ TextureImporter:
       name: fall_2
       rect:
         serializedVersion: 2
-        x: 622
+        x: 611
         y: 0
         width: 186
         height: 290
@@ -201,7 +201,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 40331cdb46fe8a44fbe0b950f9dbde8c
+    spriteID: 198236b48dac06c4a938cc321c3f5e37
     internalID: 0
     vertices: []
     indices: 

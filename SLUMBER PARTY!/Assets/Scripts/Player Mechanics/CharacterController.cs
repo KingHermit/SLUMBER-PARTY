@@ -86,7 +86,7 @@ public abstract class CharacterController : MonoBehaviour
     public virtual bool isGrounded()
     {
         return Physics2D.Raycast(transform.position,
-            Vector2.down, 1.2f, 
+            Vector2.down, 1f, 
             LayerMask.GetMask("Platforms"));
     }
     #endregion INITIALIZATION
@@ -135,7 +135,6 @@ public abstract class CharacterController : MonoBehaviour
 
     public virtual void ApplyKnockback(HitboxController hb)
     {
-        Debug.Log("GET LAUNCHED");
         Vector2 dir = hb.data.direction.normalized;
 
         dir.x *= hb.owner.facing;

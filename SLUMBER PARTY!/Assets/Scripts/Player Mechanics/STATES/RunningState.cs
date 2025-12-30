@@ -9,6 +9,7 @@ public class RunningState : CharacterState
     // Called ONCE when entering the state
     public override void Enter() {
         controller.animator.SetBool("isRunning", true);
+        // Debug.Log($"{controller.name} current State: Running");
     }
 
     // Called ONCE when exiting the state

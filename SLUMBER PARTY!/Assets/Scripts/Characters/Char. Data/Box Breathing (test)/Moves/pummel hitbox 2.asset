@@ -15,9 +15,9 @@ MonoBehaviour:
   HitboxPrefab: {fileID: 7772521714874919871, guid: 9b2f24c172e74924ab735f0d294d75a3, type: 3}
   offset: {x: 1, y: 0}
   size: {x: 0.8, y: 1}
-  startFrame: 1
-  endFrame: 8
-  hitstunDuration: 2
+  startFrame: 4
+  endFrame: 7
+  hitstunDuration: 1
   damage: 7
-  direction: {x: 3, y: 2}
+  direction: {x: 2, y: 3.5}
   knockbackForce: 6
