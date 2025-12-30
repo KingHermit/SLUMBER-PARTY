@@ -1,4 +1,4 @@
-## WEEK 1: MOVEMENT CONTROLS / CORE MECHANICS
+## PHASE 1: MOVEMENT CONTROLS / CORE MECHANICS
 **MOVEMENT**
 - [X] Horizontal (Left/Right)
 - [X] Vertical (Jumping)
@@ -12,4 +12,11 @@
   - [X] Hit controls / logic
   - [X] Hitbox, hit 'existence' duration
   - [X] Hit damage
-- [ ] Implement being hit / receiving
+- [X] Implement being hit / receiving
+
+## PHASE 2: COMBO LOGIC / OTHER MECHANICS
+**MIXUPS/COMBOS**
+- [ ] Air Attacks
+- [ ] Chaining
+- [ ] Blocking?
+- [ ] Combo number
