@@ -55,6 +55,14 @@ public abstract class CharacterController : MonoBehaviour
         if (moveDirection.x != 0)
             facing = (int)Mathf.Sign(moveDirection.x);
 
+        if (facing > 0)
+        {
+            GetComponent<SpriteRenderer>().flipX = false;
+        } else
+        {
+            GetComponent<SpriteRenderer>().flipX = true;
+        }
+
         if (hitboxParent)
             hitboxParent.localScale = new Vector3(facing, 1, 1);
 
