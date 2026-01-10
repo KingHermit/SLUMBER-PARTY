@@ -23,4 +23,7 @@ public class HitboxData : ScriptableObject
     [Header("Knockback")]
     public Vector2 direction;
     public float knockbackForce;
+
+    [Header("Sound / VFX")]
+    public AudioClip audio;
 }

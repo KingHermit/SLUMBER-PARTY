@@ -11,5 +11,8 @@ public class MoveData : ScriptableObject
     public int active;
     public int recovery;
 
+    [Header("Animation")]
+    public AnimationClip animation;
+
     public HitboxData[] hitboxes;
 }

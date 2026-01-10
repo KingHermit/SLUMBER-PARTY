@@ -2,6 +2,7 @@ using Combat;
 using Unity.VisualScripting;
 using UnityEngine;
 
+[SelectionBase]
 public abstract class CharacterController : MonoBehaviour
 {
     // -- DATA --
@@ -31,6 +32,9 @@ public abstract class CharacterController : MonoBehaviour
     public float fallThroughDuration = 0.3f;
     public bool fallingThrough { get; protected set; }
 
+    // -- ANIMATION --
+    public AnimatorOverrideController animOverride;
+
     #region INITIALIZATION
     protected virtual void Awake()
     {
@@ -41,6 +45,9 @@ public abstract class CharacterController : MonoBehaviour
 
         foreach (var hb in GetComponentsInChildren<HurtboxController>())
             hb.owner = this;
+
+        animOverride = new AnimatorOverrideController(animator.runtimeAnimatorController);
+        animator.runtimeAnimatorController = animOverride;
     }
 
     protected virtual void Start()
@@ -85,8 +92,9 @@ public abstract class CharacterController : MonoBehaviour
 
     public virtual bool isGrounded()
     {
+        Debug.DrawRay(transform.position, Vector2.down * (GetComponent<SpriteRenderer>().bounds.extents.y - 0.2f), Color.red);
         return Physics2D.Raycast(transform.position,
-            Vector2.down, 1f, 
+            Vector2.down, GetComponent<SpriteRenderer>().bounds.extents.y - 0.2f, 
             LayerMask.GetMask("Platforms"));
     }
     #endregion INITIALIZATION

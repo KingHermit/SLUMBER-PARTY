@@ -24,6 +24,7 @@ public class AttackState : CharacterState
     public override void SetMove(MoveData m)
     {
         m_MoveData = m;
+        controller.animOverride["Temp Attacking"] = m_MoveData.animation; // change animation clip
     }
 
     // Called ONCE when entering the state
@@ -33,6 +34,7 @@ public class AttackState : CharacterState
 
         // start animation by startup
         controller.animator.SetBool("isAttacking", true);
+        controller.animator.Play("Attack", 0, 0f);
 
         foreach (var h in m_MoveData.hitboxes)
             spawned[h] = false;
@@ -42,7 +44,7 @@ public class AttackState : CharacterState
         recovery = FrameToSeconds(m_MoveData.recovery);
         endTime = start + active + recovery;
 
-        Debug.Log($"{controller.name} attacking: {m_MoveData.moveName}, duration ~= {endTime} seconds, active hitboxes = {m_MoveData.hitboxes.Length}");
+        // Debug.Log($"{controller.name} attacking: {m_MoveData.moveName}, duration ~= {endTime} seconds, active hitboxes = {m_MoveData.hitboxes.Length}");
 
         timer = 0;
     }
@@ -99,7 +101,7 @@ public class AttackState : CharacterState
 
         // slightly halt movement while attacking
         controller.rb.linearVelocity = new Vector2(
-            controller.moveDirection.x * (controller.playerSpeed * 0.4f), // 0.4f change per attack (light, heavy, medium maybe?)
+            controller.moveDirection.x * (controller.playerSpeed * 0.8f), // 0.4f change per attack (light, heavy, medium maybe?)
             controller.rb.linearVelocity.y
         );
     }

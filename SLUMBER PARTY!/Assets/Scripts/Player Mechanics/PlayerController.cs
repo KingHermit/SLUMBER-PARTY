@@ -58,7 +58,7 @@ public class PlayerController : CharacterController
         fallingThrough = true;
         effector.rotationalOffset = 180f;
 
-        rb.linearVelocity = new Vector2(rb.linearVelocity.y, -5f); // apply downward force
+        rb.linearVelocity = new Vector2(rb.linearVelocity.y, -6f); // apply downward force
 
         yield return new WaitForSeconds(fallThroughDuration);
 
