@@ -21,5 +21,6 @@ MonoBehaviour:
   animatorController: {fileID: 9100000, guid: c738e69ad95c4da45ad4603909e6bf64, type: 2}
   moves:
   - {fileID: 11400000, guid: 61eb8548af2ecac4191875a3c6e5cdac, type: 2}
-  - {fileID: 11400000, guid: 03e648c183bb25642b7d1ed5c10ac9bc, type: 2}
+  - {fileID: 11400000, guid: 997cb03690d0110488e0e4cbd933012d, type: 2}
   - {fileID: 11400000, guid: 9372ef15d944db7429f0a79eaec63ba0, type: 2}
+  - {fileID: 11400000, guid: 03e648c183bb25642b7d1ed5c10ac9bc, type: 2}

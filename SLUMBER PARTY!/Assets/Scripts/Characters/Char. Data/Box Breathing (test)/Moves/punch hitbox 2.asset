@@ -21,3 +21,4 @@ MonoBehaviour:
   damage: 5
   direction: {x: 3, y: 1}
   knockbackForce: 3
+  audio: {fileID: 8300000, guid: a403dac5d0ffd804c9f321cdb74d7666, type: 3}

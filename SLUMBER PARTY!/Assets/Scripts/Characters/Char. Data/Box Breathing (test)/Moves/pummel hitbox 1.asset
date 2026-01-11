@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: pummel hitbox 1
   m_EditorClassIdentifier: 
   HitboxPrefab: {fileID: 7772521714874919871, guid: 9b2f24c172e74924ab735f0d294d75a3, type: 3}
-  offset: {x: 0.7, y: 0.5}
-  size: {x: 0.8, y: 1}
+  offset: {x: 1, y: 1.2}
+  size: {x: 0.9, y: 0.9}
   startFrame: 0
-  endFrame: 3
+  endFrame: 4
   hitstunDuration: 1
+  hitstopDuration: 0.1
   damage: 3
   direction: {x: 1, y: 0}
   knockbackForce: 1
+  audio: {fileID: 8300000, guid: 473f13fa7423eb047b7425f1e936ff51, type: 3}

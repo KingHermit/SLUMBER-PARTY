@@ -7,7 +7,8 @@ public class IdleState : CharacterState
 
     // Called ONCE when entering the state
     public override void Enter() {
-        // Debug.Log($"{controller.name} current state: Idle");
+        if (controller is DummyController)
+            Debug.Log($"{controller.name} current state: Idle");
     }
 
     // Called ONCE when exiting the state
@@ -37,6 +38,6 @@ public class IdleState : CharacterState
         controller.rb.linearVelocity = new Vector2(
         controller.moveDirection.x,
         controller.rb.linearVelocity.y
-    );
+        );
     }
 }

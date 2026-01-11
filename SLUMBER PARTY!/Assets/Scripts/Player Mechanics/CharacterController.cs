@@ -11,7 +11,10 @@ public abstract class CharacterController : MonoBehaviour
     // -- CORE --
     protected CharacterStateMachine stateMachine;
     public Rigidbody2D rb { get; protected set; }
+    public AudioSource audioSource { get; protected set; }
     public Animator animator { get; protected set; }
+
+    public AnimatorOverrideController animOverride;
 
     // -- STATS --
     public float health { get; protected set; }
@@ -32,14 +35,13 @@ public abstract class CharacterController : MonoBehaviour
     public float fallThroughDuration = 0.3f;
     public bool fallingThrough { get; protected set; }
 
-    // -- ANIMATION --
-    public AnimatorOverrideController animOverride;
 
     #region INITIALIZATION
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
 
         stateMachine = new CharacterStateMachine();
 
@@ -92,9 +94,9 @@ public abstract class CharacterController : MonoBehaviour
 
     public virtual bool isGrounded()
     {
-        Debug.DrawRay(transform.position, Vector2.down * (GetComponent<SpriteRenderer>().bounds.extents.y - 0.2f), Color.red);
+        Debug.DrawRay(transform.position, Vector2.down * (GetComponent<SpriteRenderer>().bounds.extents.y - 0.5f), Color.red);
         return Physics2D.Raycast(transform.position,
-            Vector2.down, GetComponent<SpriteRenderer>().bounds.extents.y - 0.2f, 
+            Vector2.down, GetComponent<SpriteRenderer>().bounds.extents.y - 0.5f, 
             LayerMask.GetMask("Platforms"));
     }
     #endregion INITIALIZATION

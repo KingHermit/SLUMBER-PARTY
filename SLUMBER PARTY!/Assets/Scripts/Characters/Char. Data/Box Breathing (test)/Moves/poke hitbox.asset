@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: poke hitbox
   m_EditorClassIdentifier: 
   HitboxPrefab: {fileID: 7772521714874919871, guid: 9b2f24c172e74924ab735f0d294d75a3, type: 3}
-  offset: {x: 0.55, y: 0.4}
-  size: {x: 0.6, y: 0.35}
+  offset: {x: 0.7, y: 0.4}
+  size: {x: 0.8, y: 0.4}
   startFrame: 0
   endFrame: 2
-  hitstunDuration: 0.5
+  hitstunDuration: 0.3
+  hitstopDuration: 0.1
   damage: 3
-  direction: {x: 1, y: 0}
-  knockbackForce: 1.5
+  direction: {x: 0.2, y: 0}
+  knockbackForce: 1
+  audio: {fileID: 8300000, guid: 7c547791d50623a4c96e350e51a8e528, type: 3}

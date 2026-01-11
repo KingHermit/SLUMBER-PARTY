@@ -16,7 +16,9 @@ MonoBehaviour:
   type: Heavy
   startup: 5
   active: 11
-  recovery: 4
+  recovery: 5
+  animation: {fileID: 7400000, guid: cd06e3f8e9a5b8c4794bded2be9d8364, type: 2}
   hitboxes:
   - {fileID: 11400000, guid: 1b6b109bde142e24db57b1cc16141d7a, type: 2}
   - {fileID: 11400000, guid: e86f34677b9f02849bf0fd3df83bafa2, type: 2}
+  canMove: 0

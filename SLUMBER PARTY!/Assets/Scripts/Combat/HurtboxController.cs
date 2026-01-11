@@ -32,15 +32,22 @@ namespace Combat
 
             if (hitbox.owner == owner) return; // don't hit yourself!!!
 
+            setAndPlayAudio(hitbox.data.audio);
             owner.OnHit(hitbox);
-            FindAnyObjectByType<Hitstop>().Stop(0.1f);
+            FindAnyObjectByType<Hitstop>().Stop(hitbox.data.hitstopDuration);
+        }
+
+        private void setAndPlayAudio (AudioClip hitClip)
+        {
+            owner.audioSource.clip = hitClip;
+            owner.audioSource.Play();
         }
 
         void OnDrawGizmos()
         {
             if (box == null) box = GetComponent<BoxCollider2D>();
 
-            Gizmos.color = new Color(0f, 1f, 1f, 0.35f);
+            Gizmos.color = new Color(0f, 1f, 1f, 0.15f);
             Gizmos.DrawWireCube(transform.position, box.size);
             Gizmos.DrawCube(transform.position, box.size);
         }

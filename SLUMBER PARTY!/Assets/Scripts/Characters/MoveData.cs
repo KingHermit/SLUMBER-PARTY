@@ -14,5 +14,9 @@ public class MoveData : ScriptableObject
     [Header("Animation")]
     public AnimationClip animation;
 
+    [Header("Hitboxes")]
     public HitboxData[] hitboxes;
+
+    [Header("Etc.")]
+    public bool canMove = true;
 }

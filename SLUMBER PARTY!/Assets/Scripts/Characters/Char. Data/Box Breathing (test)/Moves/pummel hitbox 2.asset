@@ -16,8 +16,10 @@ MonoBehaviour:
   offset: {x: 1, y: 0}
   size: {x: 0.8, y: 1}
   startFrame: 4
-  endFrame: 7
+  endFrame: 10
   hitstunDuration: 1
+  hitstopDuration: 0.15
   damage: 7
-  direction: {x: 2, y: 3.5}
-  knockbackForce: 6
+  direction: {x: 2, y: 6}
+  knockbackForce: 10
+  audio: {fileID: 8300000, guid: 3ffe18194d9c0ee44b26a7b70c1679e5, type: 3}

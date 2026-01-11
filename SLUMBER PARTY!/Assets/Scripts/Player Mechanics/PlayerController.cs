@@ -86,8 +86,9 @@ public class PlayerController : CharacterController
     {
         moveDirection = direction;
 
+        if (isAttacking) return;
         if (isStunned) return;
-        if (!isGrounded()) { return; }
+        if (!isGrounded()) return;
 
         if (Mathf.Abs(moveDirection.x) > 0.01f)
         {
@@ -113,7 +114,6 @@ public class PlayerController : CharacterController
         if (isAttacking) { return; }
         // if (!isGrounded()) return; // optional rule
 
-        isAttacking = true;
         stateMachine.ChangeState(attacking, data.moves[moveIndex]);
     }
 
