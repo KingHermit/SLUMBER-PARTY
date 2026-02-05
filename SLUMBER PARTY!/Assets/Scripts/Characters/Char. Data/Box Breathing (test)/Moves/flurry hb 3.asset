@@ -20,6 +20,6 @@ MonoBehaviour:
   hitstunDuration: 0.2
   hitstopDuration: 0.05
   damage: 3
-  direction: {x: 0, y: 0}
-  knockbackForce: 0
+  direction: {x: 4, y: 4}
+  knockbackForce: 3
   audio: {fileID: 8300000, guid: 3711d06b0847cc94ca67a67b0d8a1842, type: 3}
