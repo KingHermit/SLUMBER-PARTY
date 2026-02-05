@@ -17,6 +17,23 @@
 ## PHASE 2: COMBO LOGIC / OTHER MECHANICS
 **MIXUPS/COMBOS**
 - [ ] Air Attacks
-- [ ] Chaining
 - [ ] Blocking?
 - [ ] Combo number
+
+**MULTIPLAYER**
+- [ ] Multiplayer Services
+  - [ ] Lobbies
+  - [ ] Character Select
+  - [ ] Main Stage
+
+## PHASE 3: ART ASSETS AND DEBUGGING
+- [ ] Map Design
+- [ ] Both Character Sprite Assets
+  - [ ] Sleepwalker
+  - [ ] Counting Sheep
+- [ ] UI Design for all scenes
+  - [ ] Main Menu
+  - [ ] Lobby
+  - [ ] Character Select
+  - [ ] Main Stage
+  - [ ] Result / Winners + Snoozers
