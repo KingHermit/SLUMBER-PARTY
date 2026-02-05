@@ -25,11 +25,15 @@ public class DummyController : CharacterController
     #region STATE INTENT
     public override void RequestIdle()
     {
+        if (isStunned) return;
+        if (!isGrounded()) return;
         stateMachine.ChangeState(idle);
     }
 
     public override void RequestFall()
     {
+        if (isStunned) return;
+        if (isGrounded()) return;
         stateMachine.ChangeState(falling);
     }
 

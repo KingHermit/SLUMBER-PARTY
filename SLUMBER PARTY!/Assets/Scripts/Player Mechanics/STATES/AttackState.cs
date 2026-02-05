@@ -96,14 +96,24 @@ public class AttackState : CharacterState
     // Called every physics frame
     public override void UpdatePhysics()
     {
+
         // check if current frame is an active frame
         //   apply appropriate knockback + angle
 
         // slightly halt movement while attacking
-        controller.rb.linearVelocity = new Vector2(
-            controller.moveDirection.x * (controller.playerSpeed * 0.8f), // 0.4f change per attack (light, heavy, medium maybe?)
-            controller.rb.linearVelocity.y
-        );
+
+        if (m_MoveData.canMove)
+        {
+            controller.rb.linearVelocity = new Vector2(
+                controller.moveDirection.x * (controller.playerSpeed * 0.8f), // 0.4f change per attack (light, heavy, medium maybe?)
+                controller.rb.linearVelocity.y
+            );
+        } else
+        {
+            controller.rb.linearVelocity = new Vector2(0,
+                controller.rb.linearVelocityY);
+        }
+            return;
     }
 
     public float GetActiveFrames()
@@ -127,7 +137,7 @@ public class AttackState : CharacterState
             {
                 spawned[hb] = true;
 
-                Debug.Log($"[SPAWN]: {hb.name} at {timer}");
+                // Debug.Log($"[SPAWN]: {hb.name} at {timer}");
 
                 GameObject hitbox = GameObject.Instantiate(hb.HitboxPrefab); // create hitbox item
                 hitbox.transform.SetParent(controller.hitboxParent);
@@ -148,7 +158,7 @@ public class AttackState : CharacterState
 
             if (timer >= endTime)
             {
-                Debug.Log($"[DESPAWN] {hb.data.name} at {timer}");
+                // Debug.Log($"[DESPAWN] {hb.data.name} at {timer}");
 
                 hb.Disable();
                 GameObject.Destroy(hb.gameObject);
