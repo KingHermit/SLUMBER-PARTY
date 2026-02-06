@@ -21,7 +21,7 @@ public class CharacterStateMachine : MonoBehaviour
     public void ChangeState(CharacterState newState, MoveData move)
     {
         currentState?.Exit();
-        newState.SetMove(move);   // only AttackState will care about this
+        newState.SetMove(move);   // only AttackState
         currentState = newState;
         currentState.Enter();
     }

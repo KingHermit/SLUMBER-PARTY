@@ -10,8 +10,6 @@ using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class PlayerController : CharacterController
 {
-    [SerializeField] public PlayerInput input;
-
     // -- PLAYER STATES --
     [Header("States")]
     public IdleState idle;
@@ -24,11 +22,14 @@ public class PlayerController : CharacterController
     [Header("Ground Check")]
     private PlatformEffector2D effector;
 
+    [SerializeField] PlayerInput input;
+
     protected override void Awake()
     {
         base.Awake();
 
         input = GetComponent<PlayerInput>();
+        input.enabled = false;
         hitboxParent = transform.Find("HITBOXES");
 
         idle = new IdleState(this, stateMachine);
@@ -126,6 +127,21 @@ public class PlayerController : CharacterController
         stateMachine.ChangeState(stunned);
     }
     #endregion STATE INTENT
+
+    #region NETWORKING
+    public override void OnNetworkSpawn()
+    {
+        input.enabled = IsOwner; // Only allow input of Network PlayerController object if current instance owns it
+        base.OnNetworkSpawn();
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        input.enabled = false;
+        base.OnNetworkDespawn();
+    }
+
+    #endregion NETWORKING
 
 
     // -- INPUT SYSTEM CALLBACKS --

@@ -31,6 +31,7 @@ public abstract class CharacterController : NetworkBehaviour
     [SerializeField] public float playerSpeed { get; private set; }
     public Vector2 moveDirection { get; protected set; }
     public bool jumpPressed { get; protected set; }
+    public bool wasLaunched { get; set; }
     public float jumpForce { get; protected set; }
     public float maxFallSpeed = 45;
     public float fallThroughDuration = 0.3f;
@@ -65,17 +66,6 @@ public abstract class CharacterController : NetworkBehaviour
 
     protected virtual void Update()
     {
-        if (moveDirection.x != 0)
-            facing = (int)Mathf.Sign(moveDirection.x);
-
-        if (facing > 0)
-        {
-            GetComponent<SpriteRenderer>().flipX = false;
-        } else
-        {
-            GetComponent<SpriteRenderer>().flipX = true;
-        }
-
         if (hitboxParent)
             hitboxParent.localScale = new Vector3(facing, 1, 1);
 
@@ -88,12 +78,24 @@ public abstract class CharacterController : NetworkBehaviour
             isStunned = false;
         }
 
+        UpdateFacing();
         stateMachine.currentState.UpdateLogic();
     }
 
     protected virtual void FixedUpdate()
     {
+        if (PendingKnockback.Value != Vector2.zero)
+        {
+            rb.linearVelocity = PendingKnockback.Value;
+            PendingKnockback.Value = Vector2.zero;
+        }
+
         stateMachine.currentState.UpdatePhysics();
+    }
+
+    protected virtual void LateUpdate()
+    {
+        GetComponent<SpriteRenderer>().flipX = !FacingRight.Value;
     }
 
     public virtual bool isGrounded()
@@ -106,6 +108,34 @@ public abstract class CharacterController : NetworkBehaviour
     #endregion INITIALIZATION
 
     #region NETWORKING
+
+    public NetworkVariable<bool> FacingRight =
+    new NetworkVariable<bool>(
+        true,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Owner
+    );
+
+    void UpdateFacing()
+    {
+        if (moveDirection.x > 0 && !FacingRight.Value)
+        {
+            facing = 1;
+            FacingRight.Value = true;
+        } else if (moveDirection.x < 0 && FacingRight.Value)
+        {
+            facing = -1;
+            FacingRight.Value = false;
+        }
+    }
+
+    public NetworkVariable<Vector2> PendingKnockback =
+    new NetworkVariable<Vector2>(
+        Vector2.zero,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Owner
+    );
+
 
     #endregion
 
@@ -153,13 +183,15 @@ public abstract class CharacterController : NetworkBehaviour
 
     public virtual void ApplyKnockback(HitboxController hb)
     {
+        wasLaunched = true;
+
         Vector2 dir = hb.data.direction.normalized;
 
         dir.x *= hb.owner.facing;
 
         Vector2 force = dir * hb.data.knockbackForce;
 
-        rb.linearVelocity = force;
+        PendingKnockback.Value = force;
     }
     #endregion DAMAGE
 }

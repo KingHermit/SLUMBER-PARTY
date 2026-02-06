@@ -9,7 +9,7 @@ public class HitstunState : CharacterState
 
     // Called ONCE when entering the state
     public override void Enter() {
-        Debug.Log($"{controller.name} current state: Stunned");
+        // Debug.Log($"{controller.name} current state: Stunned");
         controller.animator.SetBool("isStunned", true);
     }
 
@@ -22,7 +22,7 @@ public class HitstunState : CharacterState
     // Called every frame
     public override void UpdateLogic() {
         if (!controller.isStunned) { 
-            Debug.Log("I'M OKAY!");
+            // Debug.Log("I'M OKAY!");
             if (!controller.isGrounded()) { 
                 controller.RequestFall();
             } else
@@ -33,5 +33,5 @@ public class HitstunState : CharacterState
     }
         
     // Called every physics frame
-    public override void UpdatePhysics() { }
+    public override void UpdatePhysics() {}
 }
