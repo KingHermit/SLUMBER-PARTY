@@ -11,9 +11,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Widgets/Scenes/WidgetsQuickstart.unity
     guid: e2c0726ddb0efaa4da43ec7aedb3cfaf
-  - enabled: 1
-    path: Assets/NGO_Minimal_Setup/NGO_Setup.unity
-    guid: 240dd8168e2ffdf44a2f3faf04a978b4
   m_configObjects:
     com.unity.adaptiveperformance.google.android.provider_settings: {fileID: 11400000, guid: 194de47c1fe1720478b4ab1ac64db6bd, type: 2}
     com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 6ee16e8ce17f68d4389720b3afc00366, type: 2}
