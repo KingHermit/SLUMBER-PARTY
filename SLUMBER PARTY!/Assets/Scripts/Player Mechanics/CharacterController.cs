@@ -1,9 +1,10 @@
 using Combat;
-using Unity.VisualScripting;
+using Unity.Netcode;
 using UnityEngine;
 
+
 [SelectionBase]
-public abstract class CharacterController : MonoBehaviour
+public abstract class CharacterController : NetworkBehaviour
 {
     // -- DATA --
     [SerializeField] protected CharacterData data;
@@ -35,6 +36,9 @@ public abstract class CharacterController : MonoBehaviour
     public float fallThroughDuration = 0.3f;
     public bool fallingThrough { get; protected set; }
 
+    #region NETWORKING
+
+    #endregion
 
     #region INITIALIZATION
     protected virtual void Awake()
@@ -100,6 +104,10 @@ public abstract class CharacterController : MonoBehaviour
             LayerMask.GetMask("Platforms"));
     }
     #endregion INITIALIZATION
+
+    #region NETWORKING
+
+    #endregion
 
     #region STATES
 

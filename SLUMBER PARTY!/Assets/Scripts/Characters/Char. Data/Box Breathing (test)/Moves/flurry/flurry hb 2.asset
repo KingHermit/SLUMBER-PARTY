@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 521df26d1a4044f458b9e856080f4441, type: 3}
-  m_Name: flurry hb 3
+  m_Name: flurry hb 2
   m_EditorClassIdentifier: 
   HitboxPrefab: {fileID: 7772521714874919871, guid: 9b2f24c172e74924ab735f0d294d75a3, type: 3}
   offset: {x: 1, y: 0.5}
   size: {x: 1, y: 2}
-  startFrame: 4
-  endFrame: 5
+  startFrame: 2
+  endFrame: 3
   hitstunDuration: 0.2
   hitstopDuration: 0.05
   damage: 3
   direction: {x: 4, y: 4}
-  knockbackForce: 3
+  knockbackForce: 4
   audio: {fileID: 8300000, guid: 3711d06b0847cc94ca67a67b0d8a1842, type: 3}

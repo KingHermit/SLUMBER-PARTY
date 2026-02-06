@@ -1,4 +1,3 @@
-using Combat;
 using NUnit.Framework.Interfaces;
 using System;
 using System.Collections;
@@ -11,7 +10,7 @@ using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class PlayerController : CharacterController
 {
-    [SerializeField] public InputActionReference m_input;
+    [SerializeField] public PlayerInput input;
 
     // -- PLAYER STATES --
     [Header("States")]
@@ -29,10 +28,8 @@ public class PlayerController : CharacterController
     {
         base.Awake();
 
+        input = GetComponent<PlayerInput>();
         hitboxParent = transform.Find("HITBOXES");
-
-        m_input.action.performed += OnMove;
-        m_input.action.canceled  += OnMove;
 
         idle = new IdleState(this, stateMachine);
         running = new RunningState(this, stateMachine);
@@ -129,8 +126,6 @@ public class PlayerController : CharacterController
         stateMachine.ChangeState(stunned);
     }
     #endregion STATE INTENT
-
-
 
 
     // -- INPUT SYSTEM CALLBACKS --
