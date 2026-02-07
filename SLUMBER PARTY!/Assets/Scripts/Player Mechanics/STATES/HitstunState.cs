@@ -5,8 +5,6 @@ public class HitstunState : CharacterState
     public HitstunState(CharacterController controller, CharacterStateMachine stateMachine)
         : base(controller, stateMachine) { }
 
-    float stunDuration;
-
     // Called ONCE when entering the state
     public override void Enter() {
         // Debug.Log($"{controller.name} current state: Stunned");
@@ -15,7 +13,6 @@ public class HitstunState : CharacterState
 
     // Called ONCE when exiting the state
     public override void Exit() {
-        controller.ClearStun();
         controller.animator.SetBool("isStunned", false);
     }
 

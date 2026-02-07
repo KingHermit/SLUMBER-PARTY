@@ -37,10 +37,6 @@ public abstract class CharacterController : NetworkBehaviour
     public float fallThroughDuration = 0.3f;
     public bool fallingThrough { get; protected set; }
 
-    #region NETWORKING
-
-    #endregion
-
     #region INITIALIZATION
     protected virtual void Awake()
     {
@@ -84,11 +80,11 @@ public abstract class CharacterController : NetworkBehaviour
 
     protected virtual void FixedUpdate()
     {
-        if (PendingKnockback.Value != Vector2.zero)
-        {
-            rb.linearVelocity = PendingKnockback.Value;
-            PendingKnockback.Value = Vector2.zero;
-        }
+        //if (PendingKnockback.Value != Vector2.zero)
+        //{
+        //    rb.linearVelocity = PendingKnockback.Value;
+        //    PendingKnockback.Value = Vector2.zero;
+        //}
 
         stateMachine.currentState.UpdatePhysics();
     }
@@ -129,13 +125,13 @@ public abstract class CharacterController : NetworkBehaviour
         }
     }
 
-    public NetworkVariable<Vector2> PendingKnockback =
-    new NetworkVariable<Vector2>(
-        Vector2.zero,
-        NetworkVariableReadPermission.Everyone,
-        NetworkVariableWritePermission.Owner
-    );
-
+    // NOTE: Knockback should be an RPC, not a network variable!
+    //public NetworkVariable<Vector2> PendingKnockback =
+    //new NetworkVariable<Vector2>(
+    //    Vector2.zero,
+    //    NetworkVariableReadPermission.Everyone,
+    //    NetworkVariableWritePermission.Owner
+    //);
 
     #endregion
 
@@ -144,7 +140,7 @@ public abstract class CharacterController : NetworkBehaviour
     // Universal transitions
     public abstract void RequestIdle();
     public abstract void RequestFall();
-    public abstract void RequestHitstun(HitboxData hb);
+    public abstract void RequestHitstun(HitResult result);
 
     // Optional capabilities
     public virtual void RequestAttack(int moveIndex) { }
@@ -164,34 +160,34 @@ public abstract class CharacterController : NetworkBehaviour
         isAttacking = false;
     }
 
-    public void ClearStun()
+    public virtual void OnHit(ulong attackerID, HitResult result)
     {
-        isStunned = false;
+        if (!IsServer) return;
+
+        OnHitClientRpc(attackerID, result);
     }
 
-    public virtual void OnHit(HitboxController hb)
-    {   
-        // apply damage
-        health -= hb.data.damage;
+    [Rpc(SendTo.ClientsAndHost)]
+    public virtual void OnHitClientRpc(ulong attackerID, HitResult result)
+    {
+        health -= result.damage;
+        hitstunTimer = result.hitstun;
 
-        // enter hitstun state
-        hitstunTimer = hb.data.hitstunDuration;
-
-        ApplyKnockback(hb);
-        RequestHitstun(hb.data);
+        ApplyKnockback(result);
+        RequestHitstun(result);
     }
 
-    public virtual void ApplyKnockback(HitboxController hb)
+    public virtual void ApplyKnockback(HitResult result)
     {
         wasLaunched = true;
 
-        Vector2 dir = hb.data.direction.normalized;
+        Vector2 dir = result.direction.normalized;
 
-        dir.x *= hb.owner.facing;
+        dir.x *= result.attackerFacing;
 
-        Vector2 force = dir * hb.data.knockbackForce;
-
-        PendingKnockback.Value = force;
+        Vector2 force = dir * result.knockbackForce;
+        rb.linearVelocity = force;
     }
+
     #endregion DAMAGE
 }

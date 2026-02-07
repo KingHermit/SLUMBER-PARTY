@@ -1,11 +1,15 @@
-using UnityEngine;
 using Environment;
+using System.Globalization;
+using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace Combat
 {
     public class HurtboxController : MonoBehaviour
     {
+        HitboxController hitbox;
         public CharacterController owner;
         private BoxCollider2D box;
 
@@ -23,17 +27,38 @@ namespace Combat
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            var hitbox = collision.GetComponent<HitboxController>();
-
-            if (hitbox == null)
-            {
-                return;
-            }
-
+            hitbox = collision.GetComponent<HitboxController>();
+            if (hitbox == null) return;
             if (hitbox.owner == owner) return; // don't hit yourself!!!
 
+            Debug.Log($"Trigger on {owner.OwnerClientId} | isServer={owner.IsServer} isOwner={owner.IsOwner}");
+
+            HitResult result = new HitResult
+            {
+                damage = hitbox.data.damage,
+                hitstun = hitbox.data.hitstunDuration,
+                knockbackForce = hitbox.data.knockbackForce,
+                direction = hitbox.data.direction.normalized,
+                attackerFacing = hitbox.owner.facing,
+                hitstop = hitbox.data.hitstopDuration
+            };
+
+            ReportHitServerRpc(
+                owner.OwnerClientId,
+                result
+            );
+        }
+
+        [Rpc(SendTo.Server)]
+        void ReportHitServerRpc(ulong attackerID, HitResult result)
+        {
+            //Debug.Log($"Sending hit to server: {attackerID}");
+            if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                attackerID, out var obj))
+                return;
+
             setAndPlayAudio(hitbox.data.audio);
-            owner.OnHit(hitbox);
+            owner.OnHit(owner.NetworkObjectId, result);
             FindAnyObjectByType<Hitstop>().Stop(hitbox.data.hitstopDuration);
         }
 

@@ -1,4 +1,5 @@
 using Combat;
+using Unity.Netcode;
 using UnityEngine;
 
 public class DummyController : CharacterController
@@ -37,16 +38,18 @@ public class DummyController : CharacterController
         stateMachine.ChangeState(falling);
     }
 
-    public override void RequestHitstun(HitboxData hb)
+    public override void RequestHitstun(HitResult result)
     {
         stateMachine.ChangeState(stunned);
     }
     #endregion STATE INTENT
 
     #region DAMAGE
-    public override void ApplyKnockback(HitboxController hb)
+
+    
+    public override void ApplyKnockback(HitResult result)
     {
-        base.ApplyKnockback(hb);
+        base.ApplyKnockback(result);
     }
     #endregion DAMAGE
 

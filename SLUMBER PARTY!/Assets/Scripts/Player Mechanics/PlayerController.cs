@@ -122,7 +122,7 @@ public class PlayerController : CharacterController
         stateMachine.ChangeState(falling);
     }
 
-    public override void RequestHitstun(HitboxData hb)
+    public override void RequestHitstun(HitResult result)
     {
         stateMachine.ChangeState(stunned);
     }
