@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &257273741 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3944137081454106703, guid: b0e53c9f81b7ac2408bc0dfb0faca5bc, type: 3}
+  m_PrefabInstance: {fileID: 3920131361629350376}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &356333767
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,12 +262,16 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   data: {fileID: 11400000, guid: e0f38963fa1e3f7488dfd3f5cf86f486, type: 2}
   animOverride: {fileID: 0}
+  currentStateNet:
+    m_InternalValue: 0
   maxFallSpeed: 45
   fallThroughDuration: 0.3
-  HitstunTime:
+  Health:
     m_InternalValue: 0
   FacingRight:
     m_InternalValue: 1
+  moveNetIndex:
+    m_InternalValue: -1
 --- !u!95 &356333774
 Animator:
   serializedVersion: 7
@@ -438,7 +447,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
+  SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
@@ -729,6 +738,14 @@ PrefabInstance:
     - target: {fileID: 3930560809395760646, guid: b0e53c9f81b7ac2408bc0dfb0faca5bc, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 2700902826
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930560809395760646, guid: b0e53c9f81b7ac2408bc0dfb0faca5bc, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930560809395760646, guid: b0e53c9f81b7ac2408bc0dfb0faca5bc, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 2256287249
       objectReference: {fileID: 0}
     - target: {fileID: 3944137081454106703, guid: b0e53c9f81b7ac2408bc0dfb0faca5bc, type: 3}
       propertyPath: m_Name
@@ -1554,6 +1571,14 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 979215824
       objectReference: {fileID: 0}
+    - target: {fileID: 3930560809395760646, guid: b0e53c9f81b7ac2408bc0dfb0faca5bc, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930560809395760646, guid: b0e53c9f81b7ac2408bc0dfb0faca5bc, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 2256287249
+      objectReference: {fileID: 0}
     - target: {fileID: 3944137081454106703, guid: b0e53c9f81b7ac2408bc0dfb0faca5bc, type: 3}
       propertyPath: m_Name
       value: Player
@@ -1609,13 +1634,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3944137081454106703, guid: b0e53c9f81b7ac2408bc0dfb0faca5bc, type: 3}
+      insertIndex: 4
+      addedObject: {fileID: 7917187706241435633}
   m_SourcePrefab: {fileID: 100100000, guid: b0e53c9f81b7ac2408bc0dfb0faca5bc, type: 3}
 --- !u!4 &7917187706241435631 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6609202816002387463, guid: b0e53c9f81b7ac2408bc0dfb0faca5bc, type: 3}
   m_PrefabInstance: {fileID: 3920131361629350376}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7917187706241435633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 257273741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f457954c645ea9349a60cebca0753203, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  CurrentStateID:
+    m_InternalValue: 0
+  CurrentAttackIndex:
+    m_InternalValue: -1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

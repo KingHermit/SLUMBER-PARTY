@@ -1,4 +1,6 @@
 using Combat;
+using System.Collections.Generic;
+using Unity.Android.Gradle.Manifest;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,7 +9,7 @@ using UnityEngine;
 public abstract class CharacterController : NetworkBehaviour
 {
     // -- DATA --
-    [SerializeField] protected CharacterData data;
+    [SerializeField] public CharacterData data;
 
     // -- CORE --
     protected CharacterStateMachine stateMachine;
@@ -17,15 +19,16 @@ public abstract class CharacterController : NetworkBehaviour
 
     public AnimatorOverrideController animOverride;
 
-    // -- STATS --
-    public float health { get; protected set; }
+    // -- STATES --
+    protected Dictionary<StateID, CharacterState> stateMap;
+    public NetworkVariable<StateID> currentStateNet = new(StateID.Idle);
     public int facing { get; protected set; } = 1;
 
     // -- COMBAT --
     public Transform hitboxParent { get; protected set; }
     public bool isAttacking { get; protected set; } = false;
-    public bool isStunned { get; protected set; }
     public float hitstunTimer { get; protected set; }
+    public bool isStunned { get; protected set; }
 
     // -- MOVEMENT --
     [SerializeField] public float playerSpeed { get; private set; }
@@ -37,6 +40,9 @@ public abstract class CharacterController : NetworkBehaviour
     public float fallThroughDuration = 0.3f;
     public bool fallingThrough { get; protected set; }
 
+
+
+
     #region INITIALIZATION
     protected virtual void Awake()
     {
@@ -45,6 +51,9 @@ public abstract class CharacterController : NetworkBehaviour
         audioSource = GetComponent<AudioSource>();
 
         stateMachine = new CharacterStateMachine();
+
+        var stateSync = GetComponent<StateSync>();
+        stateSync.Initialize(stateMachine);
 
         foreach (var hb in GetComponentsInChildren<HurtboxController>())
             hb.owner = this;
@@ -55,10 +64,19 @@ public abstract class CharacterController : NetworkBehaviour
 
     protected virtual void Start()
     {
-        health = data.maxHealth;
+        Health = new NetworkVariable<float>(
+            data.maxHealth,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+
         playerSpeed = data.speed;
         jumpForce = data.jumpForce;
     }
+    #endregion INITIALIZATION
+
+
+
+    #region UPDATE
 
     protected virtual void Update()
     {
@@ -75,17 +93,10 @@ public abstract class CharacterController : NetworkBehaviour
         }
 
         UpdateFacing();
-        stateMachine.currentState.UpdateLogic();
     }
 
     protected virtual void FixedUpdate()
     {
-        //if (PendingKnockback.Value != Vector2.zero)
-        //{
-        //    rb.linearVelocity = PendingKnockback.Value;
-        //    PendingKnockback.Value = Vector2.zero;
-        //}
-
         stateMachine.currentState.UpdatePhysics();
     }
 
@@ -94,6 +105,8 @@ public abstract class CharacterController : NetworkBehaviour
         GetComponent<SpriteRenderer>().flipX = !FacingRight.Value;
     }
 
+    #endregion UPDATE
+
     public virtual bool isGrounded()
     {
         Debug.DrawRay(transform.position, Vector2.down * (GetComponent<SpriteRenderer>().bounds.extents.y - 0.5f), Color.red);
@@ -101,9 +114,14 @@ public abstract class CharacterController : NetworkBehaviour
             Vector2.down, GetComponent<SpriteRenderer>().bounds.extents.y - 0.5f, 
             LayerMask.GetMask("Platforms"));
     }
-    #endregion INITIALIZATION
 
-    #region NETWORKING
+
+    #region --NETWORKING
+
+    public NetworkVariable<float> Health;
+
+    //public NetworkVariable<bool> isStunned =
+    //new NetworkVariable<bool>(false);
 
     public NetworkVariable<bool> FacingRight =
     new NetworkVariable<bool>(
@@ -125,22 +143,54 @@ public abstract class CharacterController : NetworkBehaviour
         }
     }
 
-    // NOTE: Knockback should be an RPC, not a network variable!
-    //public NetworkVariable<Vector2> PendingKnockback =
-    //new NetworkVariable<Vector2>(
-    //    Vector2.zero,
-    //    NetworkVariableReadPermission.Everyone,
-    //    NetworkVariableWritePermission.Owner
-    //);
+    public NetworkVariable<int> moveNetIndex =
+        new NetworkVariable<int>(
+            -1,
+            NetworkVariableReadPermission.Everyone
+    );
 
-    #endregion
+    #endregion --NETWORKING
+
+
 
     #region STATES
 
     // Universal transitions
+    public virtual void TransitionToState(StateID id, int moveIndex = -1)
+    {
+        Debug.Log($"Attempting State transition to: {id} with Attack {moveIndex}");
+        stateMachine.ChangeState(id, moveIndex); 
+
+        StateSync stateSync = GetComponent<StateSync>(); // TODO: FIX!
+        //Debug.Log($"StateSync current state ID: {stateSync.CurrentStateID.Value}");
+
+        stateSync.CurrentStateID.Value = id;
+        stateSync.CurrentAttackIndex.Value = moveIndex;
+    }
+
+    [ServerRpc]
+    public virtual void RequestStateChangeServerRpc(StateID requestedID)
+    {
+        // server-side validation
+        if (currentStateNet.Value == StateID.Stunned) return;
+
+        TransitionToState(requestedID);
+    }
+
+    [ServerRpc]
+    public virtual void RequestStateAttackServerRpc(MovePacketNet moveNet)
+    {
+        // server-side validation
+        if (currentStateNet.Value == StateID.Stunned) return;
+
+        moveNetIndex.Value = moveNet.MoveIndex;
+
+        TransitionToState(StateID.Attacking, moveNetIndex.Value);
+    }
+
     public abstract void RequestIdle();
     public abstract void RequestFall();
-    public abstract void RequestHitstun(HitResult result);
+    public abstract void RequestHitstun();
 
     // Optional capabilities
     public virtual void RequestAttack(int moveIndex) { }
@@ -160,33 +210,34 @@ public abstract class CharacterController : NetworkBehaviour
         isAttacking = false;
     }
 
-    public virtual void OnHit(ulong attackerID, HitResult result)
+    public virtual void OnHit(ulong attackerID, MovePacketNet packet)
     {
         if (!IsServer) return;
 
-        OnHitClientRpc(attackerID, result);
+        // Find the Attacker's CharacterData
+        var attacker = NetworkManager.Singleton.SpawnManager.SpawnedObjects[packet.attackerID]
+                       .GetComponent<CharacterController>();
+
+        // Find the move and specific hitbox you were hit by 
+        HitboxData hbData = attacker.data.moves[packet.MoveIndex].hitboxes[packet.HitboxIndex];
+
+        Health.Value -= hbData.damage;
+
+        hitstunTimer = hbData.hitstunDuration;
+
+        RequestHitstun();
+        ApplyKnockback(hbData, packet.facing);
     }
 
-    [Rpc(SendTo.ClientsAndHost)]
-    public virtual void OnHitClientRpc(ulong attackerID, HitResult result)
+    public virtual void ApplyKnockback(HitboxData data, int attackerFacing)
     {
-        health -= result.damage;
-        hitstunTimer = result.hitstun;
+        if (!IsServer) return;
 
-        ApplyKnockback(result);
-        RequestHitstun(result);
-    }
-
-    public virtual void ApplyKnockback(HitResult result)
-    {
         wasLaunched = true;
+        Vector2 dir = data.direction.normalized;
+        dir.x *= attackerFacing;
 
-        Vector2 dir = result.direction.normalized;
-
-        dir.x *= result.attackerFacing;
-
-        Vector2 force = dir * result.knockbackForce;
-        rb.linearVelocity = force;
+        rb.linearVelocity = dir * data.knockbackForce;
     }
 
     #endregion DAMAGE

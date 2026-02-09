@@ -1,4 +1,7 @@
+using Environment;
+using Unity.Netcode;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace Combat
 {
@@ -8,6 +11,9 @@ namespace Combat
         public CharacterController owner; // who spawned the hitbox
         private BoxCollider2D box;
 
+        private int moveIndex;
+        private int hitboxIndex;
+
         private Vector2 localOffset;
 
         void Awake()
@@ -16,10 +22,12 @@ namespace Combat
             box.enabled = false; // start disabled
         }
 
-        public void Setup(HitboxData hitboxData, CharacterController creator)
+        public void Setup(HitboxData hitboxData, CharacterController creator, int moveIdx, int hitboxIdx)
         {
             data = hitboxData;
             owner = creator;
+            moveIndex = moveIdx;
+            hitboxIndex = hitboxIdx;
 
             // Store the local offset so Update() can reposition it every frame
             localOffset = hitboxData.offset * owner.facing;
@@ -40,6 +48,40 @@ namespace Combat
 
             // Make the hitbox follow the player (disjoint or attached)
             transform.localPosition = new Vector3(localOffset.x * owner.facing, localOffset.y * owner.facing, 0f);
+        }
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.TryGetComponent(out HurtboxController hurtboxController))
+            {
+                if (!owner.IsOwner) return;
+
+                var hurtbox = collision.GetComponent<HurtboxController>();
+                if (hurtbox == null) return;
+                if (hurtbox.owner == owner) return;
+
+                Debug.Log($"Trigger on {hurtbox.owner.OwnerClientId} | isServer={hurtbox.owner.IsServer} isOwner={hurtbox.owner.IsOwner}");
+
+                MovePacketNet packet = new MovePacketNet
+                {
+                    attackerID = owner.NetworkObjectId,
+                    MoveIndex = moveIndex,
+                    HitboxIndex = hitboxIndex,
+                    facing = owner.facing
+                };
+
+                setHitAudio(hurtbox.owner, data.audio);
+
+                hurtbox.ReportHitServerRpc(
+                    owner.OwnerClientId,
+                    packet
+                );
+            }
+        }
+
+        private void setHitAudio(CharacterController victim, AudioClip hitClip)
+        {
+            victim.audioSource.clip = hitClip;
         }
 
         private bool active;

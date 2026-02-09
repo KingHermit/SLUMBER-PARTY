@@ -2,7 +2,6 @@ using NUnit.Framework.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.TextCore.Text;
@@ -12,13 +11,7 @@ public class PlayerController : CharacterController
 {
     // -- PLAYER STATES --
     [Header("States")]
-    public IdleState idle;
-    public RunningState running;
-    public JumpingState jumping;
-    public FallingState falling;
-    public AttackState attacking;
-    public HitstunState stunned;
-
+    
     [Header("Ground Check")]
     private PlatformEffector2D effector;
 
@@ -29,22 +22,25 @@ public class PlayerController : CharacterController
         base.Awake();
 
         input = GetComponent<PlayerInput>();
-        input.enabled = false;
         hitboxParent = transform.Find("HITBOXES");
 
-        idle = new IdleState(this, stateMachine);
-        running = new RunningState(this, stateMachine);
-        jumping = new JumpingState(this, stateMachine);
-        falling = new FallingState(this, stateMachine);
-        attacking = new AttackState(this, stateMachine);
-        stunned = new HitstunState(this, stateMachine);
+        stateMap = new Dictionary<StateID, CharacterState> {
+
+            { StateID.Idle, new IdleState(this, stateMachine) },
+            { StateID.Running, new RunningState(this, stateMachine) },
+            { StateID.Jumping, new JumpingState(this, stateMachine) },
+            { StateID.Falling, new FallingState(this, stateMachine) },
+            { StateID.Attacking, new AttackState(this, stateMachine) },
+            { StateID.Stunned, new HitstunState(this, stateMachine) },
+        };
+
+        stateMachine.Initialize(StateID.Idle, stateMap);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected override void Start()
     {
         base.Start();
-        stateMachine.Initialize(idle);
 
         Debug.Log("Character reporting for duty: " + data.name);
     }
@@ -74,71 +70,71 @@ public class PlayerController : CharacterController
 
     // -- STATE INTENT --
     #region STATE INTENT
+
     public override void RequestIdle()
     {
-        if (isStunned) return;
-        stateMachine.ChangeState(idle);
+        if (currentStateNet.Value == StateID.Stunned || !isGrounded()) return;
+
+        RequestStateChangeServerRpc(StateID.Idle);
     }
 
     public override void RequestRun(Vector2 direction)
     {
         moveDirection = direction;
 
-        if (isAttacking) return;
-        if (isStunned) return;
-        if (!isGrounded()) return;
+        if (currentStateNet.Value == StateID.Attacking ||
+            !isGrounded()) return;
 
         if (Mathf.Abs(moveDirection.x) > 0.01f)
         {
-            stateMachine.ChangeState(running);
-        } else
-        {
-            RequestIdle();
+            RequestStateChangeServerRpc(StateID.Running);
+            return;
         }
     }
 
     public override void RequestJump()
     {
-        if (isStunned) return;
-        if (!isGrounded()) { return; }
-        if (isAttacking) { return; }
+        if (currentStateNet.Value == StateID.Attacking ||
+            !isGrounded()) return;
 
-        stateMachine.ChangeState(jumping);
+        RequestStateChangeServerRpc(StateID.Jumping);
     }
 
     public override void RequestAttack(int moveIndex)
     {
-        if (isStunned) return;
-        if (isAttacking) { return; }
-        // if (!isGrounded()) return; // optional rule
+        if (currentStateNet.Value == StateID.Attacking) return;
 
-        stateMachine.ChangeState(attacking, data.moves[moveIndex]);
+        var packet = new MovePacketNet { MoveIndex = moveIndex };
+        RequestStateAttackServerRpc(packet);
     }
 
     public override void RequestFall()
     {
-        if (isStunned) return;
         if (isGrounded()) { return; }
-        stateMachine.ChangeState(falling);
+        RequestStateChangeServerRpc(StateID.Falling);
     }
 
-    public override void RequestHitstun(HitResult result)
+    public override void RequestHitstun()
     {
-        stateMachine.ChangeState(stunned);
+        RequestStateChangeServerRpc(StateID.Stunned);
     }
     #endregion STATE INTENT
+
 
     #region NETWORKING
     public override void OnNetworkSpawn()
     {
-        input.enabled = IsOwner; // Only allow input of Network PlayerController object if current instance owns it
-        base.OnNetworkSpawn();
+        // input.enabled = IsOwner;
+
+        currentStateNet.OnValueChanged += (oldID, newID) =>
+        {
+            stateMachine.ChangeState(newID, moveNetIndex.Value);
+        };
     }
 
     public override void OnNetworkDespawn()
     {
         input.enabled = false;
-        base.OnNetworkDespawn();
     }
 
     #endregion NETWORKING
@@ -149,19 +145,22 @@ public class PlayerController : CharacterController
     public void OnLightAttack(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
-        RequestAttack(0);
+        moveNetIndex.Value = 0;
+        RequestAttack(moveNetIndex.Value);
     }
 
     public void OnMediumAttack(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
-        RequestAttack(1);
+        moveNetIndex.Value = 1;
+        RequestAttack(moveNetIndex.Value);
     }
 
     public void OnHeavyAttack(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
-        RequestAttack(2);
+        moveNetIndex.Value = 2;
+        RequestAttack(moveNetIndex.Value);
     }
 
     public void OnMove(InputAction.CallbackContext context)

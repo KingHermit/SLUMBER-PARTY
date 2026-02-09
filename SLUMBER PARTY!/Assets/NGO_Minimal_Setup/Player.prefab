@@ -320,10 +320,12 @@ MonoBehaviour:
   animOverride: {fileID: 0}
   maxFallSpeed: 45
   fallThroughDuration: 0.3
+  Health:
+    m_InternalValue: 0
+  isStunned:
+    m_InternalValue: 0
   FacingRight:
     m_InternalValue: 1
-  PendingKnockback:
-    m_InternalValue: {x: 0, y: 0}
   input: {fileID: 0}
 --- !u!114 &6990716188899720468
 MonoBehaviour:
@@ -648,7 +650,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   NetworkAnimatorExpanded: 0
-  AuthorityMode: 1
+  AuthorityMode: 0
   m_Animator: {fileID: 5665358163667602323}
   TransitionStateInfoList: []
   AnimatorParameterEntries:
@@ -698,7 +700,7 @@ MonoBehaviour:
   RotationMaxInterpolationTime: 0.1
   ScaleLerpSmoothing: 1
   ScaleMaxInterpolationTime: 0.1
-  AuthorityMode: 1
+  AuthorityMode: 0
   TickSyncChildren: 1
   UseUnreliableDeltas: 0
   SyncPositionX: 1
@@ -734,7 +736,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   NetworkRigidbodyBaseExpanded: 0
-  UseRigidBodyForMotion: 0
+  UseRigidBodyForMotion: 1
   AutoUpdateKinematicState: 0
   AutoSetKinematicOnDespawn: 1
 --- !u!1 &8937210241624465232

@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Fighter/MoveData")]
 public class MoveData : ScriptableObject
 {
+    public int MoveID;
     public string moveName;
     public string type; // Light, Medium, Heavy, SPECIAL
 

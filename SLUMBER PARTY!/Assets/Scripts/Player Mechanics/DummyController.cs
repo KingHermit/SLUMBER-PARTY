@@ -1,55 +1,54 @@
 using Combat;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
 public class DummyController : CharacterController
 {
-    IdleState idle;
-    HitstunState stunned;
-    FallingState falling;
 
     protected override void Awake()
     {
         base.Awake();
 
-        idle = new IdleState(this, stateMachine);
-        stunned = new HitstunState(this, stateMachine);
-        falling = new FallingState(this, stateMachine);
+        stateMap = new Dictionary<StateID, CharacterState> {
+
+            { StateID.Idle, new IdleState(this, stateMachine) },
+            { StateID.Falling, new FallingState(this, stateMachine) },
+            { StateID.Stunned, new HitstunState(this, stateMachine) },
+        };
     }
 
     protected override void Start()
     {
         base.Start();
-        stateMachine.Initialize(idle);
+        stateMachine.Initialize(StateID.Idle, stateMap);
     }
 
     #region STATE INTENT
     public override void RequestIdle()
     {
-        if (isStunned) return;
         if (!isGrounded()) return;
-        stateMachine.ChangeState(idle);
+        RequestStateChangeServerRpc(StateID.Idle);
     }
 
     public override void RequestFall()
     {
-        if (isStunned) return;
         if (isGrounded()) return;
-        stateMachine.ChangeState(falling);
+        RequestStateChangeServerRpc(StateID.Falling);
     }
 
-    public override void RequestHitstun(HitResult result)
+    public override void RequestHitstun()
     {
-        stateMachine.ChangeState(stunned);
+        RequestStateChangeServerRpc(StateID.Stunned);
     }
     #endregion STATE INTENT
 
     #region DAMAGE
 
     
-    public override void ApplyKnockback(HitResult result)
+    public override void ApplyKnockback(HitboxData data, int attackerFacing)
     {
-        base.ApplyKnockback(result);
+        base.ApplyKnockback(data, attackerFacing);
     }
     #endregion DAMAGE
 

@@ -25,5 +25,5 @@ public abstract class CharacterState
     public abstract void UpdatePhysics();
 
     // Only for Attacking State
-    public virtual void SetMove(MoveData m) { }
+    public virtual void SetMove(int moveIndex) { }
 }

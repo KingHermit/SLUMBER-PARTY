@@ -21,9 +21,9 @@ public class AttackState : CharacterState
     public AttackState(CharacterController controller, CharacterStateMachine stateMachine)
         : base(controller, stateMachine) { }
 
-    public override void SetMove(MoveData m)
+    public override void SetMove(int moveIndex)
     {
-        m_MoveData = m;
+        this.m_MoveData = controller.data.moves[moveIndex];
         controller.animOverride["Temp Attacking"] = m_MoveData.animation; // change animation clip
     }
 
@@ -136,14 +136,15 @@ public class AttackState : CharacterState
             if (!spawned[hb] && timer >= startTime) // if current frame is hitbox's startFrame, instantiate
             {
                 spawned[hb] = true;
-
-                // Debug.Log($"[SPAWN]: {hb.name} at {timer}");
-
                 GameObject hitbox = GameObject.Instantiate(hb.HitboxPrefab); // create hitbox item
                 hitbox.transform.SetParent(controller.hitboxParent);
+
                 var hb_controller = hitbox.GetComponent<HitboxController>();
 
-                hb_controller.Setup(hb, controller); // apply HitboxData to hitbox item
+                // pass the move index (current move) and i (this hitbox's index)
+                int moveIdx = controller.data.moves.IndexOf(m_MoveData);
+                hb_controller.Setup(hb, controller, moveIdx, i); // apply HitboxData to hitbox item
+
                 activeHitboxes.Add(hb_controller);
             }
         }
@@ -158,8 +159,6 @@ public class AttackState : CharacterState
 
             if (timer >= endTime)
             {
-                // Debug.Log($"[DESPAWN] {hb.data.name} at {timer}");
-
                 hb.Disable();
                 GameObject.Destroy(hb.gameObject);
 
