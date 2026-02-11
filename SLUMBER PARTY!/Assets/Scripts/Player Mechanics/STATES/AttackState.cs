@@ -63,8 +63,6 @@ public class AttackState : CharacterState
     // Called every frame
     public override void UpdateLogic()
     {
-        // see which other attacks are chainable?
-        // apply damage..? oh man i'd have to keep track of hitboxes too
         timer += Time.deltaTime;
 
         // startup -> active (Enter Active Frame Duration)

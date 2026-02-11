@@ -73,50 +73,50 @@ public class PlayerController : CharacterController
 
     public override void RequestIdle()
     {
-        if (currentStateNet.Value == StateID.Stunned || !isGrounded()) return;
+        if (stateMachine.CurrentStateID.Value == StateID.Stunned || !isGrounded()) return;
 
-        RequestStateChangeServerRpc(StateID.Idle);
+        RequestStateChange(StateID.Idle);
     }
 
     public override void RequestRun(Vector2 direction)
     {
         moveDirection = direction;
 
-        if (currentStateNet.Value == StateID.Attacking ||
+        if (stateMachine.CurrentStateID.Value == StateID.Attacking ||
             !isGrounded()) return;
 
         if (Mathf.Abs(moveDirection.x) > 0.01f)
         {
-            RequestStateChangeServerRpc(StateID.Running);
+            RequestStateChange(StateID.Running);
             return;
         }
     }
 
     public override void RequestJump()
     {
-        if (currentStateNet.Value == StateID.Attacking ||
+        if (stateMachine.CurrentStateID.Value == StateID.Attacking ||
             !isGrounded()) return;
 
-        RequestStateChangeServerRpc(StateID.Jumping);
+        RequestStateChange(StateID.Jumping);
     }
 
     public override void RequestAttack(int moveIndex)
     {
-        if (currentStateNet.Value == StateID.Attacking) return;
+        if (stateMachine.CurrentStateID.Value == StateID.Attacking) return;
 
         var packet = new MovePacketNet { MoveIndex = moveIndex };
-        RequestStateAttackServerRpc(packet);
+        RequestStateAttack(packet);
     }
 
     public override void RequestFall()
     {
         if (isGrounded()) { return; }
-        RequestStateChangeServerRpc(StateID.Falling);
+        RequestStateChange(StateID.Falling);
     }
 
     public override void RequestHitstun()
     {
-        RequestStateChangeServerRpc(StateID.Stunned);
+        RequestStateChange(StateID.Stunned);
     }
     #endregion STATE INTENT
 
@@ -124,11 +124,11 @@ public class PlayerController : CharacterController
     #region NETWORKING
     public override void OnNetworkSpawn()
     {
-        // input.enabled = IsOwner;
+        input.enabled = IsOwner;
 
-        currentStateNet.OnValueChanged += (oldID, newID) =>
+        stateMachine.CurrentStateID.OnValueChanged += (oldID, newID) =>
         {
-            stateMachine.ChangeState(newID, moveNetIndex.Value);
+            stateMachine.ChangeState(newID, moveIndex);
         };
     }
 
@@ -145,22 +145,22 @@ public class PlayerController : CharacterController
     public void OnLightAttack(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
-        moveNetIndex.Value = 0;
-        RequestAttack(moveNetIndex.Value);
+        moveIndex = 0;
+        RequestAttack(moveIndex);
     }
 
     public void OnMediumAttack(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
-        moveNetIndex.Value = 1;
-        RequestAttack(moveNetIndex.Value);
+        moveIndex = 1;
+        RequestAttack(moveIndex);
     }
 
     public void OnHeavyAttack(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
-        moveNetIndex.Value = 2;
-        RequestAttack(moveNetIndex.Value);
+        moveIndex = 2;
+        RequestAttack(moveIndex);
     }
 
     public void OnMove(InputAction.CallbackContext context)

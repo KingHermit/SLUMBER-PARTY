@@ -28,18 +28,18 @@ public class DummyController : CharacterController
     public override void RequestIdle()
     {
         if (!isGrounded()) return;
-        RequestStateChangeServerRpc(StateID.Idle);
+        RequestStateChange(StateID.Idle);
     }
 
     public override void RequestFall()
     {
         if (isGrounded()) return;
-        RequestStateChangeServerRpc(StateID.Falling);
+        RequestStateChange(StateID.Falling);
     }
 
     public override void RequestHitstun()
     {
-        RequestStateChangeServerRpc(StateID.Stunned);
+        RequestStateChange(StateID.Stunned);
     }
     #endregion STATE INTENT
 

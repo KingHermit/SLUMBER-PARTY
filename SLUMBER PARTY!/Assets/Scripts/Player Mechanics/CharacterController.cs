@@ -1,4 +1,5 @@
 using Combat;
+using System;
 using System.Collections.Generic;
 using Unity.Android.Gradle.Manifest;
 using Unity.Netcode;
@@ -21,10 +22,10 @@ public abstract class CharacterController : NetworkBehaviour
 
     // -- STATES --
     protected Dictionary<StateID, CharacterState> stateMap;
-    public NetworkVariable<StateID> currentStateNet = new(StateID.Idle);
     public int facing { get; protected set; } = 1;
 
     // -- COMBAT --
+    public int moveIndex { get; protected set; }
     public Transform hitboxParent { get; protected set; }
     public bool isAttacking { get; protected set; } = false;
     public float hitstunTimer { get; protected set; }
@@ -36,7 +37,7 @@ public abstract class CharacterController : NetworkBehaviour
     public bool jumpPressed { get; protected set; }
     public bool wasLaunched { get; set; }
     public float jumpForce { get; protected set; }
-    public float maxFallSpeed = 45;
+    public float maxFallSpeed = 60;
     public float fallThroughDuration = 0.3f;
     public bool fallingThrough { get; protected set; }
 
@@ -50,10 +51,7 @@ public abstract class CharacterController : NetworkBehaviour
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
 
-        stateMachine = new CharacterStateMachine();
-
-        var stateSync = GetComponent<StateSync>();
-        stateSync.Initialize(stateMachine);
+        stateMachine = GetComponent<CharacterStateMachine>();
 
         foreach (var hb in GetComponentsInChildren<HurtboxController>())
             hb.owner = this;
@@ -93,11 +91,12 @@ public abstract class CharacterController : NetworkBehaviour
         }
 
         UpdateFacing();
+        stateMap[stateMachine.CurrentStateID.Value].UpdateLogic();
     }
 
     protected virtual void FixedUpdate()
     {
-        stateMachine.currentState.UpdatePhysics();
+        stateMap[stateMachine.CurrentStateID.Value].UpdatePhysics();
     }
 
     protected virtual void LateUpdate()
@@ -109,9 +108,13 @@ public abstract class CharacterController : NetworkBehaviour
 
     public virtual bool isGrounded()
     {
-        Debug.DrawRay(transform.position, Vector2.down * (GetComponent<SpriteRenderer>().bounds.extents.y - 0.5f), Color.red);
-        return Physics2D.Raycast(transform.position,
-            Vector2.down, GetComponent<SpriteRenderer>().bounds.extents.y - 0.5f, 
+        Debug.DrawRay(new Vector2(transform.position.x, transform.position.y - 0.3f),
+            Vector2.down * (GetComponent<SpriteRenderer>().bounds.extents.y - 0.8f),
+            Color.red);
+
+        return Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.3f),
+            Vector2.down,
+            GetComponent<SpriteRenderer>().bounds.extents.y - 0.8f, 
             LayerMask.GetMask("Platforms"));
     }
 
@@ -119,9 +122,6 @@ public abstract class CharacterController : NetworkBehaviour
     #region --NETWORKING
 
     public NetworkVariable<float> Health;
-
-    //public NetworkVariable<bool> isStunned =
-    //new NetworkVariable<bool>(false);
 
     public NetworkVariable<bool> FacingRight =
     new NetworkVariable<bool>(
@@ -143,12 +143,6 @@ public abstract class CharacterController : NetworkBehaviour
         }
     }
 
-    public NetworkVariable<int> moveNetIndex =
-        new NetworkVariable<int>(
-            -1,
-            NetworkVariableReadPermission.Everyone
-    );
-
     #endregion --NETWORKING
 
 
@@ -158,34 +152,26 @@ public abstract class CharacterController : NetworkBehaviour
     // Universal transitions
     public virtual void TransitionToState(StateID id, int moveIndex = -1)
     {
-        Debug.Log($"Attempting State transition to: {id} with Attack {moveIndex}");
-        stateMachine.ChangeState(id, moveIndex); 
-
-        StateSync stateSync = GetComponent<StateSync>(); // TODO: FIX!
-        //Debug.Log($"StateSync current state ID: {stateSync.CurrentStateID.Value}");
-
-        stateSync.CurrentStateID.Value = id;
-        stateSync.CurrentAttackIndex.Value = moveIndex;
+        //Debug.Log("1. State changes");
+        stateMachine.ChangeState(id, moveIndex);
     }
 
-    [ServerRpc]
-    public virtual void RequestStateChangeServerRpc(StateID requestedID)
+    public virtual void RequestStateChange(StateID requestedID)
     {
         // server-side validation
-        if (currentStateNet.Value == StateID.Stunned) return;
+        if (stateMachine.CurrentStateID.Value == StateID.Stunned) return;
 
         TransitionToState(requestedID);
     }
 
-    [ServerRpc]
-    public virtual void RequestStateAttackServerRpc(MovePacketNet moveNet)
+    public virtual void RequestStateAttack(MovePacketNet moveNet)
     {
         // server-side validation
-        if (currentStateNet.Value == StateID.Stunned) return;
+        if (stateMachine.CurrentStateID.Value == StateID.Stunned) return;
 
-        moveNetIndex.Value = moveNet.MoveIndex;
+        moveIndex = moveNet.MoveIndex;
 
-        TransitionToState(StateID.Attacking, moveNetIndex.Value);
+        TransitionToState(StateID.Attacking, moveIndex);
     }
 
     public abstract void RequestIdle();
@@ -210,29 +196,24 @@ public abstract class CharacterController : NetworkBehaviour
         isAttacking = false;
     }
 
-    public virtual void OnHit(ulong attackerID, MovePacketNet packet)
+    public virtual void OnHit(MovePacketNet packet) // TODO: FIX ATTACK AND KNOCKBACK AGAIN (MOVE TO HITSTUNSTATE)
     {
-        if (!IsServer) return;
-
-        // Find the Attacker's CharacterData
-        var attacker = NetworkManager.Singleton.SpawnManager.SpawnedObjects[packet.attackerID]
-                       .GetComponent<CharacterController>();
+        if (IsServer) return;
 
         // Find the move and specific hitbox you were hit by 
-        HitboxData hbData = attacker.data.moves[packet.MoveIndex].hitboxes[packet.HitboxIndex];
+        HitboxData hbData = data.moves[packet.MoveIndex].hitboxes[packet.HitboxIndex];
 
         Health.Value -= hbData.damage;
 
         hitstunTimer = hbData.hitstunDuration;
 
+        Debug.Log("OW (DATA APPLIED");
         RequestHitstun();
         ApplyKnockback(hbData, packet.facing);
     }
 
     public virtual void ApplyKnockback(HitboxData data, int attackerFacing)
     {
-        if (!IsServer) return;
-
         wasLaunched = true;
         Vector2 dir = data.direction.normalized;
         dir.x *= attackerFacing;

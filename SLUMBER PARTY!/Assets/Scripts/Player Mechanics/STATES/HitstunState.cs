@@ -19,7 +19,7 @@ public class HitstunState : CharacterState
     // Called every frame
     public override void UpdateLogic() {
         if (!controller.isStunned) { 
-            // Debug.Log("I'M OKAY!");
+            Debug.Log("I'M OKAY!");
             if (!controller.isGrounded()) { 
                 controller.RequestFall();
             } else

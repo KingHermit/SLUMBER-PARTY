@@ -14,11 +14,8 @@ public class FallingState : CharacterState
 
         if (controller.wasLaunched)
         {
-            decayMultiplier = 0.2f;
+            decayMultiplier = 2f;
             controller.wasLaunched = false;
-        } else
-        {
-            decayMultiplier = 1f;
         }
     }
 
@@ -31,8 +28,15 @@ public class FallingState : CharacterState
     public override void UpdateLogic() {
         if (controller.isGrounded())
         {
-            controller.RequestIdle();
-            return;
+            if (controller.moveDirection.x != 0)
+            {
+                controller.RequestRun(controller.moveDirection);
+                return;
+            } else
+            {
+                controller.RequestIdle();
+                return;
+            }
         }
     }
 

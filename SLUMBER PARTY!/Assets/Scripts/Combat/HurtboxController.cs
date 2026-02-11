@@ -30,7 +30,8 @@ namespace Combat
             // INSERT SERVER VALIDATION LATER
             HitboxData hbData = owner.data.moves[packet.MoveIndex].hitboxes[packet.HitboxIndex];
 
-            owner.OnHit(owner.NetworkObjectId, packet);
+            Debug.Log("OW (DATA RECEIVED)");
+            owner.OnHit(packet);
             PlayHitEffectsClientRpc(hbData);
         }
 
