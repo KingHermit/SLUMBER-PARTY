@@ -7,8 +7,8 @@ public class IdleState : CharacterState
 
     // Called ONCE when entering the state
     public override void Enter() {
-        if (controller is DummyController)
-            Debug.Log($"{controller.name} current state: Idle");
+        //if (controller is CharacterController && controller.IsOwner)
+        //    Debug.Log($"{controller.name} current state: Idle");
     }
 
     // Called ONCE when exiting the state

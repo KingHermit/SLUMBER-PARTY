@@ -15,7 +15,7 @@ MonoBehaviour:
   CharacterName: Box Breathing
   CharacterDescription: he's our test dummuy
   CharacterType: THE OG
-  speed: 7
+  speed: 8
   jumpForce: 9.5
   maxHealth: 100
   animatorController: {fileID: 9100000, guid: c738e69ad95c4da45ad4603909e6bf64, type: 2}

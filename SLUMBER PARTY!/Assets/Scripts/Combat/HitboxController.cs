@@ -60,7 +60,7 @@ namespace Combat
                 if (hurtbox == null) return;
                 if (hurtbox.owner == owner) return;
 
-                Debug.Log($"Trigger on {hurtbox.owner.OwnerClientId} | isServer={hurtbox.owner.IsServer} isOwner={hurtbox.owner.IsOwner}");
+                Debug.Log($"Trigger on {hurtbox.owner.OwnerClientId} | isOwner={hurtbox.owner.IsOwner} isClient={hurtbox.owner.IsClient}");
 
                 MovePacketNet packet = new MovePacketNet
                 {
@@ -73,7 +73,7 @@ namespace Combat
                 setHitAudio(hurtbox.owner, data.audio);
 
                 hurtbox.ReportHitServerRpc(
-                    owner.OwnerClientId,
+                    owner,
                     packet
                 );
             }

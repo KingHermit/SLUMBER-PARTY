@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class HitstunState : CharacterState
@@ -7,24 +8,31 @@ public class HitstunState : CharacterState
 
     // Called ONCE when entering the state
     public override void Enter() {
-        // Debug.Log($"{controller.name} current state: Stunned");
+        Debug.Log($"{controller.OwnerClientId} current state: Stunned");
         controller.animator.SetBool("isStunned", true);
     }
 
     // Called ONCE when exiting the state
     public override void Exit() {
+        controller.hitstunTimer = 0;
         controller.animator.SetBool("isStunned", false);
     }
 
     // Called every frame
     public override void UpdateLogic() {
-        if (!controller.isStunned) { 
-            Debug.Log("I'M OKAY!");
+
+        controller.hitstunTimer -= Time.deltaTime;
+
+        if (controller.hitstunTimer <= 0) { 
+            controller.hitstunTimer = 0;
+
             if (!controller.isGrounded()) { 
                 controller.RequestFall();
+                return;
             } else
             {
                 controller.RequestIdle();
+                return;
             }
         }
     }

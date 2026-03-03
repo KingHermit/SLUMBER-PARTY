@@ -2,10 +2,9 @@ using NUnit.Framework.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.TextCore.Text;
-using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class PlayerController : CharacterController
 {
@@ -16,6 +15,7 @@ public class PlayerController : CharacterController
     private PlatformEffector2D effector;
 
     [SerializeField] PlayerInput input;
+    [SerializeField] GameObject cinemaCam;
 
     protected override void Awake()
     {
@@ -71,9 +71,14 @@ public class PlayerController : CharacterController
     // -- STATE INTENT --
     #region STATE INTENT
 
+    public override void RequestHitstun()
+    {
+        RequestStateChange(StateID.Stunned);
+    }
+
     public override void RequestIdle()
     {
-        if (stateMachine.CurrentStateID.Value == StateID.Stunned || !isGrounded()) return;
+        if (!isGrounded() || (stateMachine.CurrentStateID.Value == StateID.Stunned && isStunned)) return;
 
         RequestStateChange(StateID.Idle);
     }
@@ -94,9 +99,9 @@ public class PlayerController : CharacterController
 
     public override void RequestJump()
     {
-        if (stateMachine.CurrentStateID.Value == StateID.Attacking ||
-            !isGrounded()) return;
-
+        if ((stateMachine.CurrentStateID.Value == StateID.Attacking
+            || !isGrounded())) return;
+        jumpCount++;
         RequestStateChange(StateID.Jumping);
     }
 
@@ -110,14 +115,10 @@ public class PlayerController : CharacterController
 
     public override void RequestFall()
     {
-        if (isGrounded()) { return; }
+        if (isGrounded() || stateMachine.CurrentStateID.Value == StateID.Stunned) { return; }
         RequestStateChange(StateID.Falling);
     }
 
-    public override void RequestHitstun()
-    {
-        RequestStateChange(StateID.Stunned);
-    }
     #endregion STATE INTENT
 
 
@@ -125,6 +126,7 @@ public class PlayerController : CharacterController
     public override void OnNetworkSpawn()
     {
         input.enabled = IsOwner;
+        cinemaCam.SetActive(IsOwner);
 
         stateMachine.CurrentStateID.OnValueChanged += (oldID, newID) =>
         {

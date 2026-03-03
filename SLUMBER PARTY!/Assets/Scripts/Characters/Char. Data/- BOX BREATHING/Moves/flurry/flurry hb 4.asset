@@ -18,8 +18,8 @@ MonoBehaviour:
   startFrame: 6
   endFrame: 7
   hitstunDuration: 0.2
-  hitstopDuration: 0.05
+  hitstopDuration: 0.02
   damage: 3
-  direction: {x: 8, y: 5}
-  knockbackForce: 5
+  direction: {x: 7, y: 4}
+  knockbackForce: 4
   audio: {fileID: 8300000, guid: 3711d06b0847cc94ca67a67b0d8a1842, type: 3}

@@ -18,7 +18,7 @@ MonoBehaviour:
   startFrame: 4
   endFrame: 10
   hitstunDuration: 1
-  hitstopDuration: 0.15
+  hitstopDuration: 0.1
   damage: 7
   direction: {x: 2, y: 6}
   knockbackForce: 10

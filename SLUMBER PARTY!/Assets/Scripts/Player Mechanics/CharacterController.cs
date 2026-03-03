@@ -28,13 +28,13 @@ public abstract class CharacterController : NetworkBehaviour
     public int moveIndex { get; protected set; }
     public Transform hitboxParent { get; protected set; }
     public bool isAttacking { get; protected set; } = false;
-    public float hitstunTimer { get; protected set; }
+    public float hitstunTimer { get; set; }
     public bool isStunned { get; protected set; }
 
     // -- MOVEMENT --
     [SerializeField] public float playerSpeed { get; private set; }
     public Vector2 moveDirection { get; protected set; }
-    public bool jumpPressed { get; protected set; }
+    public int jumpCount { get; protected set; }
     public bool wasLaunched { get; set; }
     public float jumpForce { get; protected set; }
     public float maxFallSpeed = 60;
@@ -78,17 +78,14 @@ public abstract class CharacterController : NetworkBehaviour
 
     protected virtual void Update()
     {
-        if (hitboxParent)
-            hitboxParent.localScale = new Vector3(facing, 1, 1);
 
-        if (hitstunTimer > 0f)
-        {
-            hitstunTimer -= Time.deltaTime;
-            isStunned = true;
-        } else
+        if (hitstunTimer <= 0f)
         {
             isStunned = false;
         }
+
+        if (hitboxParent)
+            hitboxParent.localScale = new Vector3(facing, 1, 1);
 
         UpdateFacing();
         stateMap[stateMachine.CurrentStateID.Value].UpdateLogic();
@@ -108,6 +105,9 @@ public abstract class CharacterController : NetworkBehaviour
 
     public virtual bool isGrounded()
     {
+        jumpCount = 0;
+        wasLaunched = false;
+
         Debug.DrawRay(new Vector2(transform.position.x, transform.position.y - 0.3f),
             Vector2.down * (GetComponent<SpriteRenderer>().bounds.extents.y - 0.8f),
             Color.red);
@@ -152,15 +152,14 @@ public abstract class CharacterController : NetworkBehaviour
     // Universal transitions
     public virtual void TransitionToState(StateID id, int moveIndex = -1)
     {
-        //Debug.Log("1. State changes");
         stateMachine.ChangeState(id, moveIndex);
     }
 
     public virtual void RequestStateChange(StateID requestedID)
     {
         // server-side validation
-        if (stateMachine.CurrentStateID.Value == StateID.Stunned) return;
 
+        if (IsOwner) Debug.Log($"Player {OwnerClientId} transitioning to: {requestedID}");
         TransitionToState(requestedID);
     }
 
@@ -196,29 +195,35 @@ public abstract class CharacterController : NetworkBehaviour
         isAttacking = false;
     }
 
-    public virtual void OnHit(MovePacketNet packet) // TODO: FIX ATTACK AND KNOCKBACK AGAIN (MOVE TO HITSTUNSTATE)
+    public virtual void OnHit(CharacterController attacker, MovePacketNet packet)
     {
-        if (IsServer) return;
-
         // Find the move and specific hitbox you were hit by 
-        HitboxData hbData = data.moves[packet.MoveIndex].hitboxes[packet.HitboxIndex];
+        HitboxData hbData
+            = attacker.data.moves[packet.MoveIndex].
+            hitboxes[packet.HitboxIndex];
 
         Health.Value -= hbData.damage;
 
         hitstunTimer = hbData.hitstunDuration;
+        isStunned = true;
 
-        Debug.Log("OW (DATA APPLIED");
-        RequestHitstun();
-        ApplyKnockback(hbData, packet.facing);
+        ApplyKnockbackServerRpc(hbData.direction.normalized, packet.facing, hbData.knockbackForce);
     }
 
-    public virtual void ApplyKnockback(HitboxData data, int attackerFacing)
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    public virtual void ApplyKnockbackServerRpc(Vector2 dir, int attackerFacing, float force)
     {
         wasLaunched = true;
-        Vector2 dir = data.direction.normalized;
         dir.x *= attackerFacing;
+        RequestHitstun();
 
-        rb.linearVelocity = dir * data.knockbackForce;
+        ApplyKnockback(dir * force);
+    }
+
+    public virtual void ApplyKnockback(Vector2 knockback)
+    {
+        rb.AddForce(knockback, ForceMode2D.Impulse);
+        //rb.linearVelocity = dir * attackData.knockbackForce;
     }
 
     #endregion DAMAGE

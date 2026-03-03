@@ -28,6 +28,7 @@ public class CharacterStateMachine : NetworkBehaviour
     public void ChangeState(StateID newState, int moveIndex = -1)
     {
         if (!IsOwner) return;
+
         // "Yeah it's not here boss"
         if (!stateInstances.ContainsKey(newState)) return;
 

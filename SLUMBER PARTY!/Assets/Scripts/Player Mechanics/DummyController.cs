@@ -45,11 +45,6 @@ public class DummyController : CharacterController
 
     #region DAMAGE
 
-    
-    public override void ApplyKnockback(HitboxData data, int attackerFacing)
-    {
-        base.ApplyKnockback(data, attackerFacing);
-    }
     #endregion DAMAGE
 
 }

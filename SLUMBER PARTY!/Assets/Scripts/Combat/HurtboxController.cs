@@ -24,15 +24,14 @@ namespace Combat
             }
         }
 
-        [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
-        public void ReportHitServerRpc(ulong attackerID, MovePacketNet packet)
+        [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Owner)]
+        public void ReportHitServerRpc(CharacterController attacker, MovePacketNet packet)
         {
             // INSERT SERVER VALIDATION LATER
             HitboxData hbData = owner.data.moves[packet.MoveIndex].hitboxes[packet.HitboxIndex];
 
-            Debug.Log("OW (DATA RECEIVED)");
-            owner.OnHit(packet);
             PlayHitEffectsClientRpc(hbData);
+            owner.OnHit(attacker, packet);
         }
 
 
@@ -40,7 +39,7 @@ namespace Combat
         private void PlayHitEffectsClientRpc(HitboxData data)
         {
             owner.audioSource.Play();
-            //FindAnyObjectByType<Hitstop>().Stop(data.hitstopDuration);
+            FindAnyObjectByType<Hitstop>().Stop(data.hitstopDuration);
         }
 
         void OnDrawGizmos()

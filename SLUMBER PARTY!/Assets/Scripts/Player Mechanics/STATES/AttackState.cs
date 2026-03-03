@@ -73,7 +73,7 @@ public class AttackState : CharacterState
                 SpawnHitboxes();
                 return;
             }
-            DespawnHitboxes(); // self-explanatory
+            DespawnHitboxes();
         }
 
         if (timer >= endTime)
@@ -96,9 +96,9 @@ public class AttackState : CharacterState
     {
 
         // check if current frame is an active frame
-        //   apply appropriate knockback + angle
 
         // slightly halt movement while attacking
+        if (!controller.IsOwner) return;
 
         if (m_MoveData.canMove)
         {
