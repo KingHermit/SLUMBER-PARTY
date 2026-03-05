@@ -24,14 +24,14 @@ namespace Combat
             }
         }
 
-        [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Owner)]
+        [Rpc(SendTo.Server)]
         public void ReportHitServerRpc(CharacterController attacker, MovePacketNet packet)
         {
             // INSERT SERVER VALIDATION LATER
             HitboxData hbData = owner.data.moves[packet.MoveIndex].hitboxes[packet.HitboxIndex];
 
             PlayHitEffectsClientRpc(hbData);
-            owner.OnHit(attacker, packet);
+            owner.OnHitRpc(packet.attackerID, packet);
         }
 
 

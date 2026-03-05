@@ -54,13 +54,11 @@ namespace Combat
         {
             if (collision.TryGetComponent(out HurtboxController hurtboxController))
             {
-                if (!owner.IsOwner) return;
-
                 var hurtbox = collision.GetComponent<HurtboxController>();
                 if (hurtbox == null) return;
                 if (hurtbox.owner == owner) return;
 
-                Debug.Log($"Trigger on {hurtbox.owner.OwnerClientId} | isOwner={hurtbox.owner.IsOwner} isClient={hurtbox.owner.IsClient}");
+                // Debug.Log($"Trigger on {hurtbox.owner.OwnerClientId} | isHost={hurtbox.owner.IsSessionOwner}");
 
                 MovePacketNet packet = new MovePacketNet
                 {

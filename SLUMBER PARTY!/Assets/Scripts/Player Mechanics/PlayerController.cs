@@ -78,7 +78,8 @@ public class PlayerController : CharacterController
 
     public override void RequestIdle()
     {
-        if (!isGrounded() || (stateMachine.CurrentStateID.Value == StateID.Stunned && isStunned)) return;
+        if (!isGrounded()) { return; }
+        if (stateMachine.CurrentStateID.Value == StateID.Stunned) { return; }
 
         RequestStateChange(StateID.Idle);
     }
@@ -115,7 +116,8 @@ public class PlayerController : CharacterController
 
     public override void RequestFall()
     {
-        if (isGrounded() || stateMachine.CurrentStateID.Value == StateID.Stunned) { return; }
+        if (isGrounded()) { return; }
+        if (stateMachine.CurrentStateID.Value == StateID.Stunned) { return; }
         RequestStateChange(StateID.Falling);
     }
 

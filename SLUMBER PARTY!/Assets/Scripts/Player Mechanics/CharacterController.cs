@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Android.Gradle.Manifest;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Diagnostics;
 
 
 [SelectionBase]
@@ -78,11 +79,6 @@ public abstract class CharacterController : NetworkBehaviour
 
     protected virtual void Update()
     {
-
-        if (hitstunTimer <= 0f)
-        {
-            isStunned = false;
-        }
 
         if (hitboxParent)
             hitboxParent.localScale = new Vector3(facing, 1, 1);
@@ -159,7 +155,7 @@ public abstract class CharacterController : NetworkBehaviour
     {
         // server-side validation
 
-        if (IsOwner) Debug.Log($"Player {OwnerClientId} transitioning to: {requestedID}");
+        // if (IsOwner) Debug.Log($"Player {OwnerClientId} transitioning to: {requestedID}");
         TransitionToState(requestedID);
     }
 
@@ -195,35 +191,32 @@ public abstract class CharacterController : NetworkBehaviour
         isAttacking = false;
     }
 
-    public virtual void OnHit(CharacterController attacker, MovePacketNet packet)
+
+
+    [Rpc(SendTo.Everyone)]
+    public virtual void OnHitRpc(ulong attackerID, MovePacketNet packet)
     {
-        // Find the move and specific hitbox you were hit by 
+        CharacterController attacker = GetNetworkObject(attackerID).GetComponent<CharacterController>();
+
         HitboxData hbData
             = attacker.data.moves[packet.MoveIndex].
             hitboxes[packet.HitboxIndex];
 
+        RequestHitstun();
+        hitstunTimer = hbData.hitstunDuration;
+
         Health.Value -= hbData.damage;
 
-        hitstunTimer = hbData.hitstunDuration;
-        isStunned = true;
-
-        ApplyKnockbackServerRpc(hbData.direction.normalized, packet.facing, hbData.knockbackForce);
+        ApplyKnockbackRpc(hbData.direction.normalized, packet.facing, hbData.knockbackForce);
     }
 
-    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
-    public virtual void ApplyKnockbackServerRpc(Vector2 dir, int attackerFacing, float force)
+    [Rpc(SendTo.Everyone)]
+    public virtual void ApplyKnockbackRpc(Vector2 dir, int attackerFacing, float force)
     {
         wasLaunched = true;
         dir.x *= attackerFacing;
-        RequestHitstun();
 
-        ApplyKnockback(dir * force);
-    }
-
-    public virtual void ApplyKnockback(Vector2 knockback)
-    {
-        rb.AddForce(knockback, ForceMode2D.Impulse);
-        //rb.linearVelocity = dir * attackData.knockbackForce;
+        rb.AddForce(dir * force, ForceMode2D.Impulse);
     }
 
     #endregion DAMAGE
