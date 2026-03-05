@@ -21,10 +21,11 @@
 - [ ] Combo number
 
 **MULTIPLAYER**
-- [ ] Multiplayer Services
+- [X] Multiplayer Services
   - [ ] Lobbies
   - [ ] Character Select
   - [ ] Main Stage
+    - kind of...
 
 ## PHASE 3: ART ASSETS AND DEBUGGING
 - [ ] Map Design
