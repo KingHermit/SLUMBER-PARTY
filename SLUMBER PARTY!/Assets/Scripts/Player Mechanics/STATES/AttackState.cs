@@ -24,7 +24,13 @@ public class AttackState : CharacterState
     public override void SetMove(int moveIndex)
     {
         this.m_MoveData = controller.data.moves[moveIndex];
-        controller.animOverride["Temp Attacking"] = m_MoveData.animation; // change animation clip
+        if (!controller.isGrounded())
+        {
+            controller.animator.SetBool("isFalling", true);
+            Debug.Log("I'm in the air and also attacking");
+        }
+
+        controller.animator.SetInteger("attackIndex", moveIndex);
     }
 
     // Called ONCE when entering the state

@@ -52,29 +52,27 @@ namespace Combat
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.TryGetComponent(out HurtboxController hurtboxController))
+            if (!owner.IsOwner) return;
+
+            if (!collision.TryGetComponent(out HurtboxController hurtbox))
+                return;
+
+            if (hurtbox == null) return;
+            if (hurtbox.owner == owner) return;
+
+            // Debug.Log($"Trigger on {hurtbox.owner.OwnerClientId} | isHost={hurtbox.owner.IsSessionOwner}");
+
+            MovePacketNet packet = new MovePacketNet
             {
-                var hurtbox = collision.GetComponent<HurtboxController>();
-                if (hurtbox == null) return;
-                if (hurtbox.owner == owner) return;
+                attackerID = owner.NetworkObjectId,
+                MoveIndex = moveIndex,
+                HitboxIndex = hitboxIndex,
+                facing = owner.facing
+            };
 
-                // Debug.Log($"Trigger on {hurtbox.owner.OwnerClientId} | isHost={hurtbox.owner.IsSessionOwner}");
+            setHitAudio(hurtbox.owner, data.audio);
 
-                MovePacketNet packet = new MovePacketNet
-                {
-                    attackerID = owner.NetworkObjectId,
-                    MoveIndex = moveIndex,
-                    HitboxIndex = hitboxIndex,
-                    facing = owner.facing
-                };
-
-                setHitAudio(hurtbox.owner, data.audio);
-
-                hurtbox.ReportHitServerRpc(
-                    owner,
-                    packet
-                );
-            }
+            hurtbox.ReportHitServerRpc(packet);
         }
 
         private void setHitAudio(CharacterController victim, AudioClip hitClip)

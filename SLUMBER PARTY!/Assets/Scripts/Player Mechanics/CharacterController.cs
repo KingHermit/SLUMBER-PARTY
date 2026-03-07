@@ -66,7 +66,7 @@ public abstract class CharacterController : NetworkBehaviour
         Health = new NetworkVariable<float>(
             data.maxHealth,
             NetworkVariableReadPermission.Everyone,
-            NetworkVariableWritePermission.Owner);
+            NetworkVariableWritePermission.Server);
 
         playerSpeed = data.speed;
         jumpForce = data.jumpForce;
@@ -120,10 +120,10 @@ public abstract class CharacterController : NetworkBehaviour
     public NetworkVariable<float> Health;
 
     public NetworkVariable<bool> FacingRight =
-    new NetworkVariable<bool>(
-        true,
-        NetworkVariableReadPermission.Everyone,
-        NetworkVariableWritePermission.Owner
+        new NetworkVariable<bool>(
+            true,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner
     );
 
     void UpdateFacing()
@@ -155,7 +155,6 @@ public abstract class CharacterController : NetworkBehaviour
     {
         // server-side validation
 
-        // if (IsOwner) Debug.Log($"Player {OwnerClientId} transitioning to: {requestedID}");
         TransitionToState(requestedID);
     }
 
@@ -193,30 +192,32 @@ public abstract class CharacterController : NetworkBehaviour
 
 
 
-    [Rpc(SendTo.Everyone)]
-    public virtual void OnHitRpc(ulong attackerID, MovePacketNet packet)
+
+    public virtual void ResolveHit(CharacterController attacker, HitboxData data, MovePacketNet packet)
     {
-        CharacterController attacker = GetNetworkObject(attackerID).GetComponent<CharacterController>();
+        if (!IsOwner)
 
-        HitboxData hbData
-            = attacker.data.moves[packet.MoveIndex].
-            hitboxes[packet.HitboxIndex];
+        Health.Value -= data.damage;
 
+        ApplyKnockback(
+            data.direction.normalized,
+            packet.facing,
+            data.knockbackForce
+            );
         RequestHitstun();
-        hitstunTimer = hbData.hitstunDuration;
-
-        Health.Value -= hbData.damage;
-
-        ApplyKnockbackRpc(hbData.direction.normalized, packet.facing, hbData.knockbackForce);
+        hitstunTimer = data.hitstunDuration;
     }
 
-    [Rpc(SendTo.Everyone)]
-    public virtual void ApplyKnockbackRpc(Vector2 dir, int attackerFacing, float force)
+    public virtual void ApplyKnockback(Vector2 direction, int attackerFacing, float force)
     {
-        wasLaunched = true;
-        dir.x *= attackerFacing;
+        if (!IsOwner) return;
+        // Debug.Log($"from {OwnerClientId}: Hit direction {direction} and {force}");
 
-        rb.AddForce(dir * force, ForceMode2D.Impulse);
+        wasLaunched = true;
+
+        direction.x *= attackerFacing;
+
+        rb.AddForce(direction * force, ForceMode2D.Impulse);
     }
 
     #endregion DAMAGE

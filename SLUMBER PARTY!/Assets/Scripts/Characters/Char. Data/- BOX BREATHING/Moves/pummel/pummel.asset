@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15dd1430358ca2d45ba991aad45a4dee, type: 3}
   m_Name: pummel
   m_EditorClassIdentifier: 
+  MoveID: 0
   moveName: pummel
   type: Heavy
   startup: 5

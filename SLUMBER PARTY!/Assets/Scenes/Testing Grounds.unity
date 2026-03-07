@@ -1795,7 +1795,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 12843036}
   m_HandleRect: {fileID: 12843035}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2561,6 +2561,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 821155944352917190, guid: b0e53c9f81b7ac2408bc0dfb0faca5bc, type: 3}
+      propertyPath: input
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 3930560809395760646, guid: b0e53c9f81b7ac2408bc0dfb0faca5bc, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 2700902826
@@ -5732,6 +5736,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e91543edb437c9146b481976fd6e4d26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   owner: {fileID: 356333773}
 --- !u!1001 &1444091924
 PrefabInstance:

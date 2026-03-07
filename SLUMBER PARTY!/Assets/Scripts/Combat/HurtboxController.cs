@@ -6,7 +6,7 @@ using static UnityEngine.Rendering.DebugUI;
 
 namespace Combat
 {
-    public class HurtboxController : MonoBehaviour
+    public class HurtboxController : NetworkBehaviour
     {
         // HitboxController hitbox;
         public CharacterController owner;
@@ -24,22 +24,32 @@ namespace Combat
             }
         }
 
-        [Rpc(SendTo.Server)]
-        public void ReportHitServerRpc(CharacterController attacker, MovePacketNet packet)
+        [Rpc(SendTo.Owner, InvokePermission = RpcInvokePermission.Everyone)]
+        public void ReportHitServerRpc(MovePacketNet packet)
         {
-            // INSERT SERVER VALIDATION LATER
-            HitboxData hbData = owner.data.moves[packet.MoveIndex].hitboxes[packet.HitboxIndex];
+            CharacterController attacker = GetNetworkObject(packet.attackerID).GetComponent<CharacterController>();
 
-            PlayHitEffectsClientRpc(hbData);
-            owner.OnHitRpc(packet.attackerID, packet);
+            HitboxData hbData = attacker.data.moves[packet.MoveIndex].hitboxes[packet.HitboxIndex];
+
+            owner.ResolveHit(attacker, hbData, packet);
+            PlayHitEffectsClientRpc(packet);
         }
 
 
-        [ClientRpc]
-        private void PlayHitEffectsClientRpc(HitboxData data)
+        [Rpc(SendTo.Everyone)]
+        private void PlayHitEffectsClientRpc(MovePacketNet packet)
+        {
+            CharacterController attacker = GetNetworkObject(packet.attackerID).GetComponent<CharacterController>();
+
+            HitboxData hbData = attacker.data.moves[packet.MoveIndex].hitboxes[packet.HitboxIndex];
+
+            PlayHitEffects(hbData);
+        }
+
+        private void PlayHitEffects(HitboxData hbData)
         {
             owner.audioSource.Play();
-            FindAnyObjectByType<Hitstop>().Stop(data.hitstopDuration);
+            FindAnyObjectByType<Hitstop>().Stop(hbData.hitstopDuration);
         }
 
         void OnDrawGizmos()
