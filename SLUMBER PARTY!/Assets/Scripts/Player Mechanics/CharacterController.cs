@@ -195,7 +195,7 @@ public abstract class CharacterController : NetworkBehaviour
 
     public virtual void ResolveHit(CharacterController attacker, HitboxData data, MovePacketNet packet)
     {
-        if (!IsOwner)
+        if (!IsServer)
 
         Health.Value -= data.damage;
 
@@ -210,7 +210,7 @@ public abstract class CharacterController : NetworkBehaviour
 
     public virtual void ApplyKnockback(Vector2 direction, int attackerFacing, float force)
     {
-        if (!IsOwner) return;
+        if (!IsServer) return;
         // Debug.Log($"from {OwnerClientId}: Hit direction {direction} and {force}");
 
         wasLaunched = true;
