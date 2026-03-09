@@ -1795,7 +1795,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 12843036}
   m_HandleRect: {fileID: 12843035}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2038,7 +2038,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5.35
+  orthographic size: 6.6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2063,7 +2063,7 @@ Transform:
   m_GameObject: {fileID: 470530703}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.9499998, y: -1.13, z: -10}
+  m_LocalPosition: {x: -1.9499998, y: -0.13, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3882,7 +3882,7 @@ GameObject:
   - component: {fileID: 844323255}
   - component: {fileID: 844323254}
   m_Layer: 5
-  m_Name: Join Session
+  m_Name: Leave Session
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7883,12 +7883,12 @@ SceneRoots:
   m_Roots:
   - {fileID: 470530706}
   - {fileID: 1210012927}
+  - {fileID: 1232697895}
+  - {fileID: 306321767}
+  - {fileID: 1892510837}
   - {fileID: 522533512}
   - {fileID: 3920131361629350376}
   - {fileID: 356333771}
   - {fileID: 476222365}
   - {fileID: 1622181878}
   - {fileID: 1704981739}
-  - {fileID: 1232697895}
-  - {fileID: 306321767}
-  - {fileID: 1892510837}

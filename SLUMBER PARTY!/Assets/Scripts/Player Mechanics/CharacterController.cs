@@ -195,22 +195,24 @@ public abstract class CharacterController : NetworkBehaviour
 
     public virtual void ResolveHit(CharacterController attacker, HitboxData data, MovePacketNet packet)
     {
-        if (!IsServer)
+        if (!IsOwner) return;
 
         Health.Value -= data.damage;
+        Debug.Log($"[Server] Resolving Hit on {gameObject.name}. Health before: {Health.Value}");
 
         ApplyKnockback(
             data.direction.normalized,
             packet.facing,
             data.knockbackForce
             );
+
         RequestHitstun();
+
         hitstunTimer = data.hitstunDuration;
     }
 
     public virtual void ApplyKnockback(Vector2 direction, int attackerFacing, float force)
     {
-        if (!IsServer) return;
         // Debug.Log($"from {OwnerClientId}: Hit direction {direction} and {force}");
 
         wasLaunched = true;

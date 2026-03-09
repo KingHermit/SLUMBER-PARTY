@@ -10,15 +10,6 @@ public class HitstunState : CharacterState
     public override void Enter() {
         // Debug.Log($"{controller.OwnerClientId} current state: Stunned");
         controller.animator.SetBool("isStunned", true);
-        if (controller.isGrounded())
-        {
-            controller.animator.SetBool("isGrounded", true);
-            //Debug.Log("I'm on the ground and also stunned");
-        } else
-        {
-            controller.animator.SetBool("isGrounded", false);
-            //Debug.Log("I'm falling and also stunned");
-        }
     }
 
     // Called ONCE when exiting the state
@@ -28,6 +19,17 @@ public class HitstunState : CharacterState
 
     // Called every frame
     public override void UpdateLogic() {
+
+        if (!controller.isGrounded())
+        {
+            controller.animator.SetBool("notGrounded", true);
+            //Debug.Log("I'm on the ground and also stunned");
+        }
+        else
+        {
+            controller.animator.SetBool("notGrounded", false);
+            //Debug.Log("I'm falling and also stunned");
+        }
 
         controller.hitstunTimer -= Time.deltaTime;
 

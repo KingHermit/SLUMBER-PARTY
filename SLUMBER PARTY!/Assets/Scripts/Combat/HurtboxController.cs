@@ -32,6 +32,7 @@ namespace Combat
             HitboxData hbData = attacker.data.moves[packet.MoveIndex].hitboxes[packet.HitboxIndex];
 
             owner.ResolveHit(attacker, hbData, packet);
+
             PlayHitEffectsClientRpc(packet);
         }
 
