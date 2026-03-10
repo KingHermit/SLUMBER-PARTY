@@ -21,6 +21,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Lobby.unity
     guid: 3cc0a0c8737185e478302e68cc0ef769
   - enabled: 1
+    path: Assets/Scenes/Character Select.unity
+    guid: f8bb061e93d73154fab2ec8e012f1b71
+  - enabled: 1
     path: Assets/Scenes/Testing Grounds.unity
     guid: 5bdc0c2896eb63d48a695cd64e5f40ab
   m_configObjects:

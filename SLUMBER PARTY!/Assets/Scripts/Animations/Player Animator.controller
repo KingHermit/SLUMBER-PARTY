@@ -115,9 +115,6 @@ AnimatorStateMachine:
   - serializedVersion: 1
     m_State: {fileID: -1898074968620564850}
     m_Position: {x: 450, y: 390, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: -7092046906193577087}
-    m_Position: {x: 485, y: 455, z: 0}
   m_ChildStateMachines:
   - serializedVersion: 1
     m_StateMachine: {fileID: 1249659727554312601}
@@ -131,7 +128,6 @@ AnimatorStateMachine:
   - first: {fileID: 1249659727554312601}
     second:
     - {fileID: -6615294125267272519}
-    - {fileID: -2620991442966144587}
     - {fileID: 8497696332362867185}
   - first: {fileID: -1118865174711871339}
     second:
@@ -167,32 +163,6 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: ca0c61aa808534d43a0f0efdc79044a3, type: 2}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &-7092046906193577087
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Box Air Stunned
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 79e4f26215f6d594393645137c048222, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -572,23 +542,6 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
---- !u!1109 &-2620991442966144587
-AnimatorTransition:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_Conditions:
-  - m_ConditionMode: 1
-    m_ConditionEvent: notGrounded
-    m_EventTreshold: 0
-  m_DstStateMachine: {fileID: 0}
-  m_DstState: {fileID: -1898074968620564850}
-  m_Solo: 0
-  m_Mute: 0
-  m_IsExit: 0
-  serializedVersion: 1
 --- !u!1109 &-2588353341747518976
 AnimatorTransition:
   m_ObjectHideFlags: 1
@@ -1084,7 +1037,7 @@ AnimatorTransition:
   - m_ConditionMode: 2
     m_ConditionEvent: isFalling
     m_EventTreshold: 0
-  - m_ConditionMode: 1
+  - m_ConditionMode: 2
     m_ConditionEvent: notGrounded
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
@@ -1474,6 +1427,9 @@ AnimatorTransition:
   m_Conditions:
   - m_ConditionMode: 2
     m_ConditionEvent: notGrounded
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isFalling
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -533133183343848044}

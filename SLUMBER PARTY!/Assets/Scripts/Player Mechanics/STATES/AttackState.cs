@@ -24,9 +24,10 @@ public class AttackState : CharacterState
     public override void SetMove(int moveIndex)
     {
         this.m_MoveData = controller.data.moves[moveIndex];
+
         if (!controller.isGrounded())
         {
-            controller.animator.SetBool("isFalling", true);
+            controller.animator.SetBool("notGrounded", true);
             Debug.Log("I'm in the air and also attacking");
         }
 
@@ -91,6 +92,7 @@ public class AttackState : CharacterState
             }
             else
             {
+                controller.animator.SetBool("notGrounded", false);
                 controller.RequestIdle();
                 return;
             }

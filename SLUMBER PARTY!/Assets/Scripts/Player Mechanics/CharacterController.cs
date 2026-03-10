@@ -46,6 +46,12 @@ public abstract class CharacterController : NetworkBehaviour
 
 
     #region INITIALIZATION
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+    }
+
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -64,12 +70,12 @@ public abstract class CharacterController : NetworkBehaviour
     protected virtual void Start()
     {
         Health = new NetworkVariable<float>(
-            data.maxHealth,
+            data.DamagePercent,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Server);
 
-        playerSpeed = data.speed;
-        jumpForce = data.jumpForce;
+        playerSpeed = data.Speed;
+        jumpForce = data.JumpForce;
     }
     #endregion INITIALIZATION
 
@@ -79,7 +85,6 @@ public abstract class CharacterController : NetworkBehaviour
 
     protected virtual void Update()
     {
-
         if (hitboxParent)
             hitboxParent.localScale = new Vector3(facing, 1, 1);
 
@@ -197,7 +202,7 @@ public abstract class CharacterController : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        Health.Value -= data.damage;
+        Health.Value += data.damage;
         Debug.Log($"[Server] Resolving Hit on {gameObject.name}. Health before: {Health.Value}");
 
         ApplyKnockback(

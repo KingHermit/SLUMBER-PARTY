@@ -9,6 +9,7 @@ public class IdleState : CharacterState
     public override void Enter() {
         //if (controller is CharacterController && controller.IsOwner)
         //    Debug.Log($"{controller.name} current state: Idle");
+        controller.animator.SetBool("notGrounded", false);
     }
 
     // Called ONCE when exiting the state
