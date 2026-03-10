@@ -17,14 +17,15 @@
 ## PHASE 2: COMBO LOGIC / OTHER MECHANICS
 **MIXUPS/COMBOS**
 - [ ] Air Attacks
+    - Almost! 
 - [ ] Blocking?
 - [ ] Combo number
 
 **MULTIPLAYER**
 - [X] Multiplayer Services
   - [ ] Lobbies
-  - [ ] Character Select
-  - [ ] Main Stage
+  - [X] Character Select
+  - [X] Main Stage
     - kind of...
 
 ## PHASE 3: ART ASSETS AND DEBUGGING
