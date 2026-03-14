@@ -21,7 +21,7 @@ public class RunningState : CharacterState
     public override void UpdateLogic() {
 
         // Idle Transition
-        if (controller.moveDirection.x == 0)
+        if (controller.MoveDirection.Value.x == 0)
         {
             controller.RequestIdle();
             return;
@@ -38,7 +38,7 @@ public class RunningState : CharacterState
     // Called every physics frame
     public override void UpdatePhysics() {
         controller.rb.linearVelocity = new Vector2(
-        controller.moveDirection.x * controller.playerSpeed,
+        controller.MoveDirection.Value.x * controller.playerSpeed,
         controller.rb.linearVelocity.y
     );
     }

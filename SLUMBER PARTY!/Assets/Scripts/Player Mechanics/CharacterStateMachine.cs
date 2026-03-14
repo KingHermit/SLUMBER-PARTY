@@ -12,7 +12,7 @@ public class CharacterStateMachine : NetworkBehaviour
     public NetworkVariable<StateID> CurrentStateID
         = new(StateID.Idle,
             NetworkVariableReadPermission.Everyone,
-            NetworkVariableWritePermission.Owner);
+            NetworkVariableWritePermission.Server);
 
     public NetworkVariable<int> CurrentAttackIndex
         = new(-1,
@@ -27,7 +27,7 @@ public class CharacterStateMachine : NetworkBehaviour
 
     public void ChangeState(StateID newState, int moveIndex = -1)
     {
-        if (!IsOwner) return;
+        if (!IsServer) return;
 
         // "Yeah it's not here boss"
         if (!stateInstances.ContainsKey(newState)) return;
@@ -41,6 +41,7 @@ public class CharacterStateMachine : NetworkBehaviour
             stateInstances[CurrentStateID.Value].SetMove(CurrentAttackIndex.Value);   // only AttackState
         }
 
+        Debug.Log("Changing states, boss o7");
         stateInstances[CurrentStateID.Value].Enter();
     }
 }

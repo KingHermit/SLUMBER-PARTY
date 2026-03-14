@@ -20,9 +20,9 @@ public class IdleState : CharacterState
     // Called every frame
     public override void UpdateLogic() {
         // Run Transition
-        if (Mathf.Abs(controller.moveDirection.x) != 0 && controller.isGrounded())
+        if (Mathf.Abs(controller.MoveDirection.Value.x) != 0 && controller.isGrounded())
         {
-            controller.RequestRun(controller.moveDirection);
+            controller.RequestRun(controller.MoveDirection.Value);
             return;
         }
 
@@ -37,7 +37,7 @@ public class IdleState : CharacterState
     // Called every physics frame
     public override void UpdatePhysics() {
         controller.rb.linearVelocity = new Vector2(
-        controller.moveDirection.x,
+        controller.MoveDirection.Value.x,
         controller.rb.linearVelocity.y
         );
     }

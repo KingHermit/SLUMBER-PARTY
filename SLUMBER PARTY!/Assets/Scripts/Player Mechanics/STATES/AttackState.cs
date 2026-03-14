@@ -111,7 +111,7 @@ public class AttackState : CharacterState
         if (m_MoveData.canMove)
         {
             controller.rb.linearVelocity = new Vector2(
-                controller.moveDirection.x * (controller.playerSpeed * 0.8f), // 0.4f change per attack (light, heavy, medium maybe?)
+                controller.MoveDirection.Value.x * (controller.playerSpeed * 0.8f), // 0.4f change per attack (light, heavy, medium maybe?)
                 controller.rb.linearVelocity.y
             );
         } else
@@ -142,8 +142,8 @@ public class AttackState : CharacterState
             if (!spawned[hb] && timer >= startTime) // if current frame is hitbox's startFrame, instantiate
             {
                 spawned[hb] = true;
-                GameObject hitbox = GameObject.Instantiate(hb.HitboxPrefab); // create hitbox item
-                hitbox.transform.SetParent(controller.hitboxParent);
+                GameObject hitbox = GameObject.Instantiate(hb.HitboxPrefab, controller.hitboxParent); // create hitbox item
+                //hitbox.transform.SetParent();
 
                 var hb_controller = hitbox.GetComponent<HitboxController>();
 

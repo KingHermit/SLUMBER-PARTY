@@ -7,12 +7,11 @@ using UnityEngine;
 
 public class TestLobby : MonoBehaviour
 {
-
-    private Lobby hostLobby;
-    private Lobby joinedLobby;
-    private float heartbeatTimer;
-    private float lobbyUpdateTimer;
-    private string playerName;
+    [SerializeField] private Lobby hostLobby;
+    [SerializeField] private Lobby joinedLobby;
+    [SerializeField] private float heartbeatTimer;
+    [SerializeField] private float lobbyUpdateTimer;
+    [SerializeField] private string playerName;
 
     private async void Start()
     {
@@ -78,7 +77,7 @@ public class TestLobby : MonoBehaviour
                 Player = GetPlayer(),
                 Data = new Dictionary<string, DataObject>
                 {
-                    { "GameMode", new DataObject(DataObject.VisibilityOptions.Public, "Pillow Fort") }
+                    { "Map", new DataObject(DataObject.VisibilityOptions.Public, "Pillow Fort") }
                 }
             };
 

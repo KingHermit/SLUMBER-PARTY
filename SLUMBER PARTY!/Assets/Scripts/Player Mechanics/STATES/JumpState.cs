@@ -9,13 +9,10 @@ public class JumpingState : CharacterState
     public override void Enter() {
         controller.animator.SetBool("isJumping", true);
 
-        // jump ONE time
         controller.rb.linearVelocity = new Vector2(
-            controller.rb.linearVelocity.x,
-            controller.jumpForce
-        );
-
-        // Debug.Log($"{controller.name} current State: Jumping");
+                controller.rb.linearVelocity.x,
+                controller.jumpForce
+            );
     }
 
     // Called ONCE when exiting the state
@@ -36,7 +33,7 @@ public class JumpingState : CharacterState
     public override void UpdatePhysics() {
         // air horizontal control
         controller.rb.linearVelocity = new Vector2(
-            controller.moveDirection.x * controller.playerSpeed,
+            controller.MoveDirection.Value.x * controller.playerSpeed,
             controller.rb.linearVelocity.y // <-- LEAVE Y ALONE!!!
         );
     }

@@ -73,7 +73,7 @@ public class PlayerController : CharacterController
 
     public override void RequestHitstun()
     {
-        RequestStateChange(StateID.Stunned);
+        TransitionToState(StateID.Stunned);
     }
 
     public override void RequestIdle()
@@ -81,29 +81,33 @@ public class PlayerController : CharacterController
         if (!isGrounded()) { return; }
         if (stateMachine.CurrentStateID.Value == StateID.Stunned) { return; }
 
-        RequestStateChange(StateID.Idle);
+        TransitionToState(StateID.Idle);
     }
 
     public override void RequestRun(Vector2 direction)
     {
-        moveDirection = direction;
+        if (!IsOwner) return;
+
+        MoveDirection.Value = direction;
 
         if (stateMachine.CurrentStateID.Value == StateID.Attacking ||
             !isGrounded()) return;
 
-        if (Mathf.Abs(moveDirection.x) > 0.01f)
+        if (Mathf.Abs(MoveDirection.Value.x) > 0.01f)
         {
-            RequestStateChange(StateID.Running);
-            return;
+            TransitionToState(StateID.Running);
+        } else
+        {
+            TransitionToState(StateID.Idle);
         }
     }
 
     public override void RequestJump()
     {
-        if ((stateMachine.CurrentStateID.Value == StateID.Attacking
-            || !isGrounded())) return;
-        jumpCount++;
-        RequestStateChange(StateID.Jumping);
+        if (stateMachine.CurrentStateID.Value == StateID.Attacking || jumpsRemaining <= 0) return;
+
+        TransitionToState(StateID.Jumping);
+        jumpsRemaining -= 1;
     }
 
     public override void RequestAttack(int moveIndex)
@@ -117,8 +121,9 @@ public class PlayerController : CharacterController
     public override void RequestFall()
     {
         if (isGrounded()) { return; }
+
         if (stateMachine.CurrentStateID.Value == StateID.Stunned) { return; }
-        RequestStateChange(StateID.Falling);
+        TransitionToState(StateID.Falling);
     }
 
     #endregion STATE INTENT
@@ -130,15 +135,28 @@ public class PlayerController : CharacterController
         input.enabled = IsOwner;
         cinemaCam.SetActive(IsOwner);
 
-        stateMachine.CurrentStateID.OnValueChanged += (oldID, newID) =>
+        if (IsClient)
         {
-            stateMachine.ChangeState(newID, moveIndex);
-        };
+            stateMachine.CurrentStateID.OnValueChanged += (oldID, newID) =>
+            {
+                stateMachine.ChangeState(newID, moveIndex);
+            };
+
+            // subscribe to attack index changes soon
+        }
     }
 
     public override void OnNetworkDespawn()
     {
         input.enabled = false;
+
+        if (IsClient)
+        {
+            stateMachine.CurrentStateID.OnValueChanged -= (oldID, newID) =>
+            {
+                stateMachine.ChangeState(newID, moveIndex);
+            };
+        }
     }
 
     #endregion NETWORKING

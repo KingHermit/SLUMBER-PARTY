@@ -35,7 +35,14 @@ public abstract class CharacterController : NetworkBehaviour
     // -- MOVEMENT --
     [SerializeField] public float playerSpeed { get; private set; }
     public Vector2 moveDirection { get; protected set; }
-    public int jumpCount { get; protected set; }
+
+    public NetworkVariable<Vector2> MoveDirection =
+    new(Vector2.zero,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Owner);
+
+    private int jumpLimit = 2;
+    [SerializeField] protected int jumpsRemaining;
     public bool wasLaunched { get; set; }
     public float jumpForce { get; protected set; }
     public float maxFallSpeed = 60;
@@ -85,15 +92,19 @@ public abstract class CharacterController : NetworkBehaviour
 
     protected virtual void Update()
     {
+        if (!IsOwner) return;
+
         if (hitboxParent)
             hitboxParent.localScale = new Vector3(facing, 1, 1);
 
-        UpdateFacing();
         stateMap[stateMachine.CurrentStateID.Value].UpdateLogic();
     }
 
     protected virtual void FixedUpdate()
     {
+        if (!IsServer) return;
+
+        UpdateFacing();
         stateMap[stateMachine.CurrentStateID.Value].UpdatePhysics();
     }
 
@@ -106,17 +117,20 @@ public abstract class CharacterController : NetworkBehaviour
 
     public virtual bool isGrounded()
     {
-        jumpCount = 0;
         wasLaunched = false;
 
         Debug.DrawRay(new Vector2(transform.position.x, transform.position.y - 0.3f),
             Vector2.down * (GetComponent<SpriteRenderer>().bounds.extents.y - 0.8f),
             Color.red);
 
-        return Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.3f),
+        bool groundCheck = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - 0.3f),
             Vector2.down,
             GetComponent<SpriteRenderer>().bounds.extents.y - 0.8f, 
             LayerMask.GetMask("Platforms"));
+
+        if (groundCheck) jumpsRemaining = getJumpLimit();
+
+        return groundCheck;
     }
 
 
@@ -128,16 +142,16 @@ public abstract class CharacterController : NetworkBehaviour
         new NetworkVariable<bool>(
             true,
             NetworkVariableReadPermission.Everyone,
-            NetworkVariableWritePermission.Owner
+            NetworkVariableWritePermission.Server
     );
 
     void UpdateFacing()
     {
-        if (moveDirection.x > 0 && !FacingRight.Value)
+        if (MoveDirection.Value.x > 0 && !FacingRight.Value)
         {
             facing = 1;
             FacingRight.Value = true;
-        } else if (moveDirection.x < 0 && FacingRight.Value)
+        } else if (MoveDirection.Value.x < 0 && FacingRight.Value)
         {
             facing = -1;
             FacingRight.Value = false;
@@ -153,14 +167,21 @@ public abstract class CharacterController : NetworkBehaviour
     // Universal transitions
     public virtual void TransitionToState(StateID id, int moveIndex = -1)
     {
-        stateMachine.ChangeState(id, moveIndex);
+        if (IsServer)
+        {
+            stateMachine.ChangeState(id, moveIndex);
+        } else if (IsClient)
+        {
+            RequestStateChangeRpc(id);
+        }
     }
 
-    public virtual void RequestStateChange(StateID requestedID)
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    public virtual void RequestStateChangeRpc(StateID requestedID)
     {
-        // server-side validation
+        // server-side validation[?]
 
-        TransitionToState(requestedID);
+        TransitionToState(requestedID); // old call
     }
 
     public virtual void RequestStateAttack(MovePacketNet moveNet)
@@ -200,7 +221,7 @@ public abstract class CharacterController : NetworkBehaviour
 
     public virtual void ResolveHit(CharacterController attacker, HitboxData data, MovePacketNet packet)
     {
-        if (!IsOwner) return;
+        if (!IsServer) return;
 
         Health.Value += data.damage;
         Debug.Log($"[Server] Resolving Hit on {gameObject.name}. Health before: {Health.Value}");
@@ -228,4 +249,10 @@ public abstract class CharacterController : NetworkBehaviour
     }
 
     #endregion DAMAGE
+
+    #region GETTERS & SETTERS
+
+    public int getJumpLimit() => jumpLimit;
+
+    #endregion GETTERS & SETTERS
 }

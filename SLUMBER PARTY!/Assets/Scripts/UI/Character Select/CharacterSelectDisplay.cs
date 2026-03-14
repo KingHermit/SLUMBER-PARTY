@@ -18,9 +18,9 @@ public class CharacterSelectDisplay : NetworkBehaviour
 
     public List<CharacterData> characters;
 
-    public GameObject charPanelPrefab;
-
     private NetworkList<CharacterSelectState> players;
+
+    public NetworkList<CharacterSelectState> selectedCharacters => players;
 
     private void Awake()
     {

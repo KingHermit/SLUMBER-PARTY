@@ -20,17 +20,6 @@ public class HitstunState : CharacterState
     // Called every frame
     public override void UpdateLogic() {
 
-        if (!controller.isGrounded())
-        {
-            controller.animator.SetBool("notGrounded", true);
-            //Debug.Log("I'm on the ground and also stunned");
-        }
-        else
-        {
-            controller.animator.SetBool("notGrounded", false);
-            //Debug.Log("I'm falling and also stunned");
-        }
-
         controller.hitstunTimer -= Time.deltaTime;
 
         if (controller.hitstunTimer < 0)
@@ -48,5 +37,17 @@ public class HitstunState : CharacterState
     }
         
     // Called every physics frame
-    public override void UpdatePhysics() {}
+    public override void UpdatePhysics() {
+
+        if (!controller.isGrounded())
+        {
+            controller.animator.SetBool("notGrounded", true);
+            //Debug.Log("I'm on the ground and also stunned");
+        }
+        else
+        {
+            controller.animator.SetBool("notGrounded", false);
+            //Debug.Log("I'm falling and also stunned");
+        }
+    }
 }

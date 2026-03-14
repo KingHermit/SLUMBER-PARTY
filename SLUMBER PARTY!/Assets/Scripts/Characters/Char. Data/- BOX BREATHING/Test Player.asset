@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 271a3e010122f9849904884c8c11d9e5, type: 3}
   m_Name: Test Player
   m_EditorClassIdentifier: 
+  id: 0
   CharacterName: Box Breathing
   CharacterDescription: he's our test dummuy
   CharacterType: THE OG
   selectIcon: {fileID: 8793639957104055765, guid: 334c477f42c6651468a1c1aa661452d5, type: 3}
   speed: 8
-  jumpForce: 9.5
-  maxHealth: 100
+  jumpForce: 8.5
   animatorController: {fileID: 9100000, guid: c738e69ad95c4da45ad4603909e6bf64, type: 2}
   moves:
   - {fileID: 11400000, guid: 61eb8548af2ecac4191875a3c6e5cdac, type: 2}

@@ -10,7 +10,6 @@ public class FallingState : CharacterState
     // Called ONCE when entering the state
     public override void Enter() {
         controller.animator.SetBool("isFalling", true);
-        //if (controller is CharacterController && controller.IsOwner) Debug.Log($"{controller.name} current State: Falling");
 
         if (controller.wasLaunched)
         {
@@ -29,9 +28,9 @@ public class FallingState : CharacterState
 
         if (controller.isGrounded())
         {
-            if (controller.moveDirection.x != 0)
+            if (controller.MoveDirection.Value.x != 0)
             {
-                controller.RequestRun(controller.moveDirection);
+                controller.RequestRun(controller.MoveDirection.Value);
                 return;
             } else
             {
@@ -46,7 +45,7 @@ public class FallingState : CharacterState
         // Air control while falling
         float x = Mathf.Lerp(
             controller.rb.linearVelocity.x,
-            0f,
+            (controller.MoveDirection.Value.x * controller.playerSpeed),
             decayMultiplier * Time.fixedDeltaTime
             );
 

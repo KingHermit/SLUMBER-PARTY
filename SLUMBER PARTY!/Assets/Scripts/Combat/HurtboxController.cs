@@ -24,7 +24,7 @@ namespace Combat
             }
         }
 
-        [Rpc(SendTo.Owner, InvokePermission = RpcInvokePermission.Everyone)]
+        [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
         public void ReportHitServerRpc(MovePacketNet packet)
         {
             CharacterController attacker = GetNetworkObject(packet.attackerID).GetComponent<CharacterController>();

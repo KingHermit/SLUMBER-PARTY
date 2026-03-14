@@ -1371,7 +1371,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 232750800}
   m_Direction: 0
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1923,6 +1923,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6bc7728687eee84a8f88c95e1fa6e51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  heartbeatTimer: 0
+  lobbyUpdateTimer: 0
+  playerName: 
 --- !u!4 &404003259
 Transform:
   m_ObjectHideFlags: 0
@@ -5064,7 +5067,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1515660401}
-    PlayerPrefab: {fileID: 9218855415572121294, guid: 805ddd5cf68a29741bb0d0d1da53a1f4, type: 3}
+    PlayerPrefab: {fileID: 0}
     Prefabs:
       NetworkPrefabsLists:
       - {fileID: 11400000, guid: 2648934ce5f100b4a894cd826f07fae3, type: 2}

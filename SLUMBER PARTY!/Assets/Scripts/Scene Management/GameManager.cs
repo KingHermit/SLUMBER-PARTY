@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Services.Matchmaker.Models;
 
 #region -- SCENE IDs --
 public enum SceneID
@@ -23,6 +24,11 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] private SceneID currentScene;
 
+    [Header("-- PLAYERS --")]
+    public Transform networkPlayersHolder;
+    [SerializeField] private NetworkObject playerPrefab;
+    [SerializeField] private List<NetworkPlayer> playerCharacterList; // figure out how to store player selected character
+
     [Header("MAIN STAGE")]
     [SerializeField] private List<Transform> playerSpawnAreas = new List<Transform>(4);
 
@@ -40,11 +46,63 @@ public class GameManager : NetworkBehaviour
     }
     #endregion -- Singleton --
 
+    public override void OnNetworkSpawn()
+    {
+        playerCharacterList = new List<NetworkPlayer>();
+
+        if (IsClient)
+        {
+
+        }
+
+        if (IsServer)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
+            NetworkManager.Singleton.OnClientConnectedCallback += HandleClientDisconnected;
+        }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        if (IsClient)
+        {
+
+        }
+
+        if (IsServer)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback -= HandleClientConnected;
+            NetworkManager.Singleton.OnClientConnectedCallback -= HandleClientDisconnected;
+        }
+    }
+
+    private void HandleClientConnected(ulong clientId)
+    {
+        NetworkObject newPlayer = Instantiate(playerPrefab, networkPlayersHolder);
+
+        if (newPlayer != null)
+        {
+            playerCharacterList.Add(newPlayer.GetComponent<NetworkPlayer>());
+        }
+    }
+
+    private void HandleClientDisconnected(ulong clientId)
+    {
+        for (int i = 0; i < playerCharacterList.Count; i++)
+        {
+            if (playerCharacterList[i].ClientId == clientId)
+            {
+                //playerCharacterList.RemoveAt(i);
+                Destroy(playerCharacterList[i]);
+                break;
+            }
+        }
+    }
+
+    #region -- SCENE LOADING --
 
     public void ChangeGameScene(SceneID newScene)
     {
-        //var newScene = currentScene + 1;
-
         switch (newScene)
         {
             case SceneID.MainMenu:
@@ -112,4 +170,6 @@ public class GameManager : NetworkBehaviour
     {
         LoadNetworkScene(scene);
     }
+
+    #endregion -- SCENE LOADING --
 }
