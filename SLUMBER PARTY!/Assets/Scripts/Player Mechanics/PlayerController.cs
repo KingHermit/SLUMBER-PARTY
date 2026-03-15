@@ -137,7 +137,10 @@ public class PlayerController : CharacterController
 
         if (IsClient)
         {
-            stateMachine.CurrentStateID.OnValueChanged += stateMachine.HandleStateChanged;
+            stateMachine.CurrentStateID.OnValueChanged += (oldID, newID) =>
+            {
+                stateMachine.ChangeState(newID, moveIndex);
+            };
 
             // subscribe to attack index changes soon
         }
@@ -149,7 +152,10 @@ public class PlayerController : CharacterController
 
         if (IsClient)
         {
-            stateMachine.CurrentStateID.OnValueChanged -= stateMachine.HandleStateChanged;
+            stateMachine.CurrentStateID.OnValueChanged -= (oldID, newID) =>
+            {
+                stateMachine.ChangeState(newID, moveIndex);
+            };
         }
     }
 

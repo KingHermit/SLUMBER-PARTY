@@ -22,7 +22,7 @@ public class JumpingState : CharacterState
 
     // Called every frame
     public override void UpdateLogic() {
-        if (controller.rb.linearVelocity.y < 0)
+        if (controller.rb.linearVelocityY < 0)
         {
             controller.RequestFall();
             return;
@@ -36,10 +36,5 @@ public class JumpingState : CharacterState
             controller.MoveDirection.Value.x * controller.playerSpeed,
             controller.rb.linearVelocity.y // <-- LEAVE Y ALONE!!!
         );
-
-        if (controller.rb.linearVelocity.y < 0)
-        {
-            controller.animator.SetBool("isJumping", false);
-        }
     }
 }

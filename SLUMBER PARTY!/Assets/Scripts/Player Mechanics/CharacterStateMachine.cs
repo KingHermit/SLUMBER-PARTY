@@ -17,7 +17,7 @@ public class CharacterStateMachine : NetworkBehaviour
     public NetworkVariable<int> CurrentAttackIndex
         = new(-1,
             NetworkVariableReadPermission.Everyone,
-            NetworkVariableWritePermission.Server);
+            NetworkVariableWritePermission.Owner);
 
     public void Initialize(StateID startingState, Dictionary<StateID, CharacterState> stateMap)
     {
@@ -32,24 +32,16 @@ public class CharacterStateMachine : NetworkBehaviour
         // "Yeah it's not here boss"
         if (!stateInstances.ContainsKey(newState)) return;
 
+        stateInstances[CurrentStateID.Value]?.Exit();
         CurrentStateID.Value = newState;
 
         if (moveIndex != -1)
         {
-            Debug.Log($"Somethin's fishy here! moveIndex: {moveIndex}");
             CurrentAttackIndex.Value = moveIndex;
+            stateInstances[CurrentStateID.Value].SetMove(CurrentAttackIndex.Value);   // only AttackState
         }
 
-    }
-
-    public void HandleStateChanged(StateID oldState, StateID newState)
-    {
-        if (stateInstances.ContainsKey(oldState))
-            stateInstances[oldState].Exit();
-
-        if (stateInstances.ContainsKey(newState))
-            stateInstances[newState].Enter();
-
-        stateInstances[CurrentStateID.Value].SetMove(CurrentAttackIndex.Value);   // only AttackState
+        Debug.Log("Changing states, boss o7");
+        stateInstances[CurrentStateID.Value].Enter();
     }
 }

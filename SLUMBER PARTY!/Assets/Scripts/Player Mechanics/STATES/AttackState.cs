@@ -43,7 +43,7 @@ public class AttackState : CharacterState
         controller.animator.SetBool("isAttacking", true);
         controller.animator.Play("Attack", 0, 0f);
 
-        foreach (var h in m_MoveData.hitboxes) // MoveData reading as null for some reason.
+        foreach (var h in m_MoveData.hitboxes)
             spawned[h] = false;
 
         start = FrameToSeconds(m_MoveData.startup);

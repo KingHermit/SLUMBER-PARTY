@@ -366,7 +366,7 @@ MonoBehaviour:
       ParameterType: 4
     - name: isJumping
       NameHash: -357477766
-      Synchronize: 0
+      Synchronize: 1
       ParameterType: 4
     - name: isFalling
       NameHash: -1829127916
