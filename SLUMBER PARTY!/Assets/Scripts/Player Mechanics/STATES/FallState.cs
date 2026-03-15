@@ -7,6 +7,7 @@ public class FallingState : CharacterState
     public FallingState(CharacterController controller, CharacterStateMachine stateMachine)
         : base(controller, stateMachine) { }
 
+
     // Called ONCE when entering the state
     public override void Enter() {
         controller.animator.SetBool("isFalling", true);

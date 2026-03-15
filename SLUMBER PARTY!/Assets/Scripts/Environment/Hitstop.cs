@@ -17,6 +17,7 @@ namespace Environment
 
         IEnumerator Wait(float duration)
         {
+            Debug.Log("We're waiting");
             waiting = true;
             yield return new WaitForSecondsRealtime(duration);
             Time.timeScale = 1.0f;
