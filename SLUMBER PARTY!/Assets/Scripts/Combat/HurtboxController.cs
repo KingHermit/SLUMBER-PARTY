@@ -27,9 +27,11 @@ namespace Combat
         [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
         public void ReportHitServerRpc(MovePacketNet packet)
         {
-            CharacterController attacker = GetNetworkObject(packet.attackerID).GetComponent<CharacterController>();
+            CharacterController attacker = GetNetworkObject(packet.attackerID)
+                .GetComponent<CharacterController>();
 
-            HitboxData hbData = attacker.data.moves[packet.MoveIndex].hitboxes[packet.HitboxIndex];
+            HitboxData hbData = attacker.data.moves[packet.MoveIndex]
+                .hitboxes[packet.HitboxIndex];
 
             owner.ResolveHit(attacker, hbData, packet);
 
@@ -40,7 +42,8 @@ namespace Combat
         [Rpc(SendTo.Everyone)]
         private void PlayHitEffectsClientRpc(MovePacketNet packet)
         {
-            CharacterController attacker = GetNetworkObject(packet.attackerID).GetComponent<CharacterController>();
+            CharacterController attacker = GetNetworkObject(packet.attackerID)
+                .GetComponent<CharacterController>();
 
             HitboxData hbData = attacker.data.moves[packet.MoveIndex].hitboxes[packet.HitboxIndex];
 

@@ -114,8 +114,9 @@ public class PlayerController : CharacterController
     {
         if (stateMachine.CurrentStateID.Value == StateID.Attacking) return;
 
-        var packet = new MovePacketNet { MoveIndex = moveIndex };
-        RequestStateAttack(packet);
+        //var packet = new MovePacketNet { MoveIndex = moveIndex };
+        //RequestStateAttack(packet);
+        TransitionToState(StateID.Attacking, moveIndex);
     }
 
     public override void RequestFall()
@@ -139,10 +140,15 @@ public class PlayerController : CharacterController
         {
             stateMachine.CurrentStateID.OnValueChanged += (oldID, newID) =>
             {
+                //TransitionToState(newID, moveIndex);
                 stateMachine.ChangeState(newID, moveIndex);
             };
 
             // subscribe to attack index changes soon
+            stateMachine.CurrentAttackIndex.OnValueChanged += (oldIdx, newIdx) =>
+            {
+                stateMachine.ChangeAttackIndex(newIdx);
+            };
         }
     }
 
@@ -154,7 +160,13 @@ public class PlayerController : CharacterController
         {
             stateMachine.CurrentStateID.OnValueChanged -= (oldID, newID) =>
             {
+                //TransitionToState(newID, moveIndex);
                 stateMachine.ChangeState(newID, moveIndex);
+            };
+
+            stateMachine.CurrentAttackIndex.OnValueChanged += (oldIdx, newIdx) =>
+            {
+                stateMachine.ChangeAttackIndex(newIdx);
             };
         }
     }

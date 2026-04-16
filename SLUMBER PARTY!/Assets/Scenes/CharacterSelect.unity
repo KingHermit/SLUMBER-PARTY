@@ -1628,11 +1628,6 @@ MonoBehaviour:
   characterNameText: {fileID: 979573344}
   characterTypeText: {fileID: 1112284584}
   characterDescText: {fileID: 1702746775}
-  characters:
-  - {fileID: 11400000, guid: 8004993b66d06d44c83d5d0750a0aad3, type: 2}
-  - {fileID: 11400000, guid: 7c8e4a05dfcc07c46a1a23a0ac074863, type: 2}
-  - {fileID: 11400000, guid: 42e19081db8744a4696e1a3ac2dae5b8, type: 2}
-  charPanelPrefab: {fileID: 2876345667418645093, guid: 2d5bf1ec09fdea54f9632bff2143273e, type: 3}
 --- !u!114 &1496059857
 MonoBehaviour:
   m_ObjectHideFlags: 0

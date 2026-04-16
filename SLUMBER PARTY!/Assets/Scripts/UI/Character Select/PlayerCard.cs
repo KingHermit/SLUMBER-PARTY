@@ -16,7 +16,7 @@ public class PlayerCard : MonoBehaviour
         {
             var character = characterDatabase.GetCharacterById(state.CharacterId);
             charIconImage.sprite = character.icon;
-            charNameText.text = character.name;
+            charNameText.text = character.CharName;
             charIconImage.enabled = true;
         } else
         {

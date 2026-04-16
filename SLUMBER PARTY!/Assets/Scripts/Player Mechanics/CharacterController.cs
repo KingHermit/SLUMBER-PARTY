@@ -92,18 +92,14 @@ public abstract class CharacterController : NetworkBehaviour
 
     protected virtual void Update()
     {
-        if (!IsOwner) return;
+        stateMap[stateMachine.CurrentStateID.Value].UpdateLogic();
 
         if (hitboxParent)
             hitboxParent.localScale = new Vector3(facing, 1, 1);
-
-        stateMap[stateMachine.CurrentStateID.Value].UpdateLogic();
     }
 
     protected virtual void FixedUpdate()
     {
-        if (!IsServer) return;
-
         UpdateFacing();
         stateMap[stateMachine.CurrentStateID.Value].UpdatePhysics();
     }
@@ -147,6 +143,7 @@ public abstract class CharacterController : NetworkBehaviour
 
     void UpdateFacing()
     {
+        if (!IsServer) return;
         if (MoveDirection.Value.x > 0 && !FacingRight.Value)
         {
             facing = 1;
@@ -169,29 +166,35 @@ public abstract class CharacterController : NetworkBehaviour
     {
         if (IsServer)
         {
-            stateMachine.ChangeState(id, moveIndex);
-        } else if (IsClient)
+            if (moveIndex != -1) this.moveIndex = moveIndex;
+            stateMachine.ChangeState(id, this.moveIndex);
+
+        }
+        else if (!IsServer)
         {
-            RequestStateChangeRpc(id);
+            RequestStateChangeRpc(id, this.moveIndex);  // stack overflow here
         }
     }
 
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
-    public virtual void RequestStateChangeRpc(StateID requestedID)
+    public virtual void RequestStateChangeRpc(StateID requestedID, int moveIndex)
     {
-        // server-side validation[?]
 
-        TransitionToState(requestedID); // old call
-    }
+        StateID current = stateMachine.CurrentStateID.Value;
 
-    public virtual void RequestStateAttack(MovePacketNet moveNet)
-    {
-        // server-side validation
-        if (stateMachine.CurrentStateID.Value == StateID.Stunned) return;
+        # region > SERVER VALIDATION
 
-        moveIndex = moveNet.MoveIndex;
+        if (current == StateID.Attacking &&
+            (requestedID == StateID.Idle || requestedID == StateID.Running))
+        { return; }
 
-        TransitionToState(StateID.Attacking, moveIndex);
+        if (requestedID == StateID.Attacking && fallingThrough) return; // no attacking while passing through platform
+
+        if (requestedID == StateID.Jumping && current == StateID.Stunned) return; // no jumping while stunned
+
+        # endregion > SERVER VALIDATION
+
+        stateMachine.ChangeState(requestedID, moveIndex);
     }
 
     public abstract void RequestIdle();
@@ -221,8 +224,6 @@ public abstract class CharacterController : NetworkBehaviour
 
     public virtual void ResolveHit(CharacterController attacker, HitboxData data, MovePacketNet packet)
     {
-        if (!IsServer) return;
-
         Health.Value += data.damage;
         Debug.Log($"[Server] Resolving Hit on {gameObject.name}. Health before: {Health.Value}");
 
@@ -239,13 +240,14 @@ public abstract class CharacterController : NetworkBehaviour
 
     public virtual void ApplyKnockback(Vector2 direction, int attackerFacing, float force)
     {
-        // Debug.Log($"from {OwnerClientId}: Hit direction {direction} and {force}");
-
         wasLaunched = true;
 
         direction.x *= attackerFacing;
+        force *= (Health.Value * 0.06f); // knockback force relative to current damage percentage
 
         rb.AddForce(direction * force, ForceMode2D.Impulse);
+
+        // Debug.Log($"from {OwnerClientId}: Hit direction {direction} and {force}");
     }
 
     #endregion DAMAGE

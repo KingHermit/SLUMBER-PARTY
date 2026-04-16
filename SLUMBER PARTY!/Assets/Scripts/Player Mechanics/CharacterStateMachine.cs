@@ -17,7 +17,7 @@ public class CharacterStateMachine : NetworkBehaviour
     public NetworkVariable<int> CurrentAttackIndex
         = new(-1,
             NetworkVariableReadPermission.Everyone,
-            NetworkVariableWritePermission.Owner);
+            NetworkVariableWritePermission.Server);
 
     public void Initialize(StateID startingState, Dictionary<StateID, CharacterState> stateMap)
     {
@@ -37,11 +37,18 @@ public class CharacterStateMachine : NetworkBehaviour
 
         if (moveIndex != -1)
         {
-            CurrentAttackIndex.Value = moveIndex;
-            stateInstances[CurrentStateID.Value].SetMove(CurrentAttackIndex.Value);   // only AttackState
+            ChangeAttackIndex(moveIndex);
         }
 
-        Debug.Log("Changing states, boss o7");
+        //Debug.Log($"From Client {OwnerClientId}: State change to {newState} with moveIndex {CurrentAttackIndex.Value}");
+
         stateInstances[CurrentStateID.Value].Enter();
+    }
+
+    public void ChangeAttackIndex (int moveIndex)
+    {
+        Debug.Log($"moveIndex: {moveIndex}");
+        CurrentAttackIndex.Value = moveIndex;
+        stateInstances[CurrentStateID.Value].SetMove(CurrentAttackIndex.Value);   // only AttackState
     }
 }

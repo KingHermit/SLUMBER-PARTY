@@ -50,9 +50,10 @@ namespace Combat
             transform.localPosition = new Vector3(localOffset.x * owner.facing, localOffset.y * owner.facing, 0f);
         }
 
+        // hitbox detects collision with hurtbox
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (!owner.IsOwner) return;
+            if (!owner.IsServer) return; //WOOHOO!
 
             if (!collision.TryGetComponent(out HurtboxController hurtbox))
                 return;
@@ -60,7 +61,7 @@ namespace Combat
             if (hurtbox == null) return;
             if (hurtbox.owner == owner) return;
 
-            // Debug.Log($"Trigger on {hurtbox.owner.OwnerClientId} | isHost={hurtbox.owner.IsSessionOwner}");
+            Debug.Log($"Trigger on {hurtbox.owner.OwnerClientId} | isHost={hurtbox.owner.IsSessionOwner}");
 
             MovePacketNet packet = new MovePacketNet
             {

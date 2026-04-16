@@ -12,6 +12,8 @@ public class AttackState : CharacterState
     private float active;
     private float recovery;
 
+    private bool canMove;
+
     private float timer;
     private float endTime;
 
@@ -24,11 +26,12 @@ public class AttackState : CharacterState
     public override void SetMove(int moveIndex)
     {
         this.m_MoveData = controller.data.moves[moveIndex];
+        canMove = this.m_MoveData.canMove;
 
         if (!controller.isGrounded())
         {
             controller.animator.SetBool("notGrounded", true);
-            Debug.Log("I'm in the air and also attacking");
+            //Debug.Log("I'm in the air and also attacking");
         }
 
         controller.animator.SetInteger("attackIndex", moveIndex);
@@ -106,9 +109,8 @@ public class AttackState : CharacterState
         // check if current frame is an active frame
 
         // slightly halt movement while attacking
-        if (!controller.IsOwner) return;
 
-        if (m_MoveData.canMove)
+        if (canMove)
         {
             controller.rb.linearVelocity = new Vector2(
                 controller.MoveDirection.Value.x * (controller.playerSpeed * 0.8f), // 0.4f change per attack (light, heavy, medium maybe?)
@@ -117,14 +119,8 @@ public class AttackState : CharacterState
         } else
         {
             controller.rb.linearVelocity = new Vector2(0,
-                controller.rb.linearVelocityY);
+                controller.rb.linearVelocity.y);
         }
-            return;
-    }
-
-    public float GetActiveFrames()
-    {
-        return active;
     }
 
     float FrameToSeconds(int frames) { return frames / 24f; }

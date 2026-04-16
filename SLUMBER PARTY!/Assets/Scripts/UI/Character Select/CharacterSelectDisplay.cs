@@ -7,16 +7,23 @@ using TMPro;
 
 public class CharacterSelectDisplay : NetworkBehaviour
 {
+    [Header("Characters")]
     [SerializeField] private CharacterDatabase characterDatabase;
     [SerializeField] private Transform charactersHolder;
+
     [SerializeField] private CharacterSelectButton selectButtonPrefab;
+
+    [Space(8)]
     [SerializeField] private PlayerCard[] playerCards;
     [SerializeField] private GameObject characterInfoPanel;
+
+    [Space(2)]
+    [Header("Info UI Text")]
     [SerializeField] private TMP_Text characterNameText;
     [SerializeField] private TMP_Text characterTypeText;
     [SerializeField] private TMP_Text characterDescText;
 
-    public List<CharacterData> characters;
+    //public List<CharacterData> characters;
 
     private NetworkList<CharacterSelectState> players;
 
