@@ -23,11 +23,9 @@ public class CharacterSelectDisplay : NetworkBehaviour
     [SerializeField] private TMP_Text characterTypeText;
     [SerializeField] private TMP_Text characterDescText;
 
-    //public List<CharacterData> characters;
-
     private NetworkList<CharacterSelectState> players;
 
-    public NetworkList<CharacterSelectState> selectedCharacters => players;
+    //public NetworkList<CharacterSelectState> selectedCharacters => players;
 
     private void Awake()
     {
@@ -113,6 +111,7 @@ public class CharacterSelectDisplay : NetworkBehaviour
             {
                 players[i] = new CharacterSelectState(
                     players[i].ClientId,
+                    false,
                     charId
                 );
             }

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class SceneLoader : NetworkBehaviour
 {
     private Scene currentScene;
+    public Button m_toMainMenu_btn;
     public Button m_startGame_btn;
     public Button m_startMatch_btn;
 
@@ -19,6 +20,7 @@ public class SceneLoader : NetworkBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        m_startGame_btn.onClick.AddListener(delegate { LoadSceneAllPlayers(0); });
         m_startGame_btn.onClick.AddListener(delegate { LoadSceneAllPlayers(2); });
         m_startMatch_btn.onClick.AddListener(delegate { LoadSceneAllPlayers(3); });
     }
@@ -37,7 +39,7 @@ public class SceneLoader : NetworkBehaviour
             case "Character Select":
                 Debug.Log($"Who up selecting they character? Next button: {m_startMatch_btn.name}");
                 return;
-            case "Main Stage":
+            case "Stage":
                 Debug.Log($"PILLOW FIGHT!!!");
                 return;
         }

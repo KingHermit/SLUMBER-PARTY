@@ -191,8 +191,8 @@ GameObject:
   - component: {fileID: 6609202816002387463}
   - component: {fileID: 8496110959153722451}
   - component: {fileID: 3930560809395760646}
-  - component: {fileID: -7748602130815691961}
-  - component: {fileID: 5745467967298138052}
+  - component: {fileID: 2550633341731191791}
+  - component: {fileID: -4971116617381168300}
   - component: {fileID: 2405381071820782652}
   - component: {fileID: 821155944352917190}
   - component: {fileID: 2738857587804305648}
@@ -278,7 +278,7 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &-7748602130815691961
+--- !u!114 &2550633341731191791
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -287,11 +287,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3944137081454106703}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Script: {fileID: 11500000, guid: da52bf8bbc1de48cfb221a6ff30f7972, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  NetworkTransformExpanded: 0
+  NetworkTransformExpanded: 1
   AutoOwnerAuthorityTickOffset: 1
   PositionInterpolationType: 0
   RotationInterpolationType: 0
@@ -302,7 +302,7 @@ MonoBehaviour:
   RotationMaxInterpolationTime: 0.1
   ScaleLerpSmoothing: 1
   ScaleMaxInterpolationTime: 0.1
-  AuthorityMode: 0
+  AuthorityMode: 1
   TickSyncChildren: 0
   UseUnreliableDeltas: 0
   SyncPositionX: 1
@@ -324,7 +324,7 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 0
   SlerpPosition: 0
---- !u!114 &5745467967298138052
+--- !u!114 &-4971116617381168300
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -355,7 +355,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   NetworkAnimatorExpanded: 0
-  AuthorityMode: 0
+  AuthorityMode: 1
   m_Animator: {fileID: 5665358163667602323}
   TransitionStateInfoList: []
   AnimatorParameterEntries:

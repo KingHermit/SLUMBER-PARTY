@@ -1,7 +1,6 @@
 using Combat;
 using System;
 using System.Collections.Generic;
-using Unity.Android.Gradle.Manifest;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Diagnostics;
@@ -138,12 +137,12 @@ public abstract class CharacterController : NetworkBehaviour
         new NetworkVariable<bool>(
             true,
             NetworkVariableReadPermission.Everyone,
-            NetworkVariableWritePermission.Server
+            NetworkVariableWritePermission.Owner
     );
 
     void UpdateFacing()
     {
-        if (!IsServer) return;
+        if (!IsOwner) return;
         if (MoveDirection.Value.x > 0 && !FacingRight.Value)
         {
             facing = 1;
@@ -164,22 +163,23 @@ public abstract class CharacterController : NetworkBehaviour
     // Universal transitions
     public virtual void TransitionToState(StateID id, int moveIndex = -1)
     {
-        if (IsServer)
-        {
-            if (moveIndex != -1) this.moveIndex = moveIndex;
-            stateMachine.ChangeState(id, this.moveIndex);
+        if (moveIndex != -1) this.moveIndex = moveIndex;
 
+        if (IsOwner)
+        {
+            // Debug.Log($"old moveIndex: {this.moveIndex}  |  new moveIndex: {moveIndex}"); // keeps switching back to -1. WHY WHY WHYYYYY
+            stateMachine.ChangeState(id, this.moveIndex);
         }
         else if (!IsServer)
         {
-            RequestStateChangeRpc(id, this.moveIndex);  // stack overflow here
+            RequestStateChangeRpc(id, this.moveIndex);
         }
     }
 
+    // idea: this method carries out server validation for switching states
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public virtual void RequestStateChangeRpc(StateID requestedID, int moveIndex)
     {
-
         StateID current = stateMachine.CurrentStateID.Value;
 
         # region > SERVER VALIDATION
@@ -194,6 +194,14 @@ public abstract class CharacterController : NetworkBehaviour
 
         # endregion > SERVER VALIDATION
 
+        ExecuteStateChangeRpc(requestedID, moveIndex);
+    }
+
+
+    // idea 2: this server actually tells the owner that requested the switch to carry out the change 👍
+    [Rpc(SendTo.Owner, InvokePermission = RpcInvokePermission.Server)]
+    private void ExecuteStateChangeRpc(StateID requestedID, int moveIndex)
+    {
         stateMachine.ChangeState(requestedID, moveIndex);
     }
 
@@ -219,15 +227,14 @@ public abstract class CharacterController : NetworkBehaviour
         isAttacking = false;
     }
 
-
-
-
     public virtual void ResolveHit(CharacterController attacker, HitboxData data, MovePacketNet packet)
     {
         Health.Value += data.damage;
         Debug.Log($"[Server] Resolving Hit on {gameObject.name}. Health before: {Health.Value}");
 
-        ApplyKnockback(
+        // server auth here too
+
+        ApplyKnockback(  // BRB; move ApplyKnockback method to hitstun state? 
             data.direction.normalized,
             packet.facing,
             data.knockbackForce
@@ -247,7 +254,7 @@ public abstract class CharacterController : NetworkBehaviour
 
         rb.AddForce(direction * force, ForceMode2D.Impulse);
 
-        // Debug.Log($"from {OwnerClientId}: Hit direction {direction} and {force}");
+        Debug.Log($"from {OwnerClientId}: Hit direction {direction} and {force}");
     }
 
     #endregion DAMAGE

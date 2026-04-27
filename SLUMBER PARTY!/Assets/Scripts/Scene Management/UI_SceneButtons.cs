@@ -1,25 +1,29 @@
 using UnityEngine;
 
-public class UI_SceneButtons : MonoBehaviour {
-
-   public void LoadMainMenu()
+namespace SLUMBER_PARTY.LobbyUtils
+{
+    public class UI_SceneButtons : MonoBehaviour
     {
-        GameManager.instance.ChangeGameScene(SceneID.MainMenu);
-    }
 
-    public void LoadLobby()
-    {
-        GameManager.instance.ChangeGameScene(SceneID.Lobby);
-    }
+        public void LoadMainMenu()
+        {
+            GameManager.instance.ChangeGameScene(SceneID.MainMenu);
+        }
 
-    public void LoadCharacterSelect()
-    {
-        GameManager.instance.ChangeGameScene(SceneID.CharacterSelect);
-    }
+        public void LoadLobby()
+        {
+            GameManager.instance.ChangeGameScene(SceneID.Lobby);
+        }
 
-    public void LoadTestingGrounds()
-    {
-        GameManager.instance.ChangeGameScene(SceneID.TestingGrounds);
+        public void LoadCharacterSelect()
+        {
+            GameManager.instance.ChangeGameScene(SceneID.CharacterSelect);
+        }
+
+        public void LoadStage()
+        {
+            GameManager.instance.ChangeGameScene(SceneID.Stage);
+        }
     }
 }
 

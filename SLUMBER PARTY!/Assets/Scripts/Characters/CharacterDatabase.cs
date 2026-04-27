@@ -3,6 +3,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "CharacterDatabase")]
 public class CharacterDatabase : ScriptableObject
 {
+    public static CharacterDatabase instance;
+
     [SerializeField] private CharacterData[] characters = new CharacterData[0];
 
     public CharacterData[] GetAllCharacters() => characters;

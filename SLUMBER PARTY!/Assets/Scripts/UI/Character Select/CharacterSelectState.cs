@@ -6,12 +6,14 @@ public struct CharacterSelectState : INetworkSerializable, IEquatable<CharacterS
 {
     public ulong ClientId;
     public int CharacterId;
+    public bool isReady;
 
 
-    public CharacterSelectState(ulong clientId, int charId = -1)
+    public CharacterSelectState(ulong clientId, bool? ready=null, int charId = -1)
     {
         ClientId = clientId;
         CharacterId = charId;
+        isReady = ready ?? false;
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter

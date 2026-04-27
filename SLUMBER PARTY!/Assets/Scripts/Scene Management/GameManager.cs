@@ -1,10 +1,12 @@
-using UnityEngine;
-using Unity.Netcode;
-using UnityEngine.SceneManagement;
-using NUnit.Framework;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Entities;
+using Unity.Netcode;
+using UnityEditor;
 using Unity.Services.Matchmaker.Models;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 #region -- SCENE IDs --
 public enum SceneID
@@ -13,24 +15,22 @@ public enum SceneID
     Lobby = 1,
     CharacterSelect = 2,
     TestingGrounds = 3,
-    MainStage = 4
+    Stage = 4
 }
 #endregion -- SCENE IDs --
 
 public class GameManager : NetworkBehaviour
 {
     public static GameManager instance;
-    bool isLoading;
+    [SerializeField] private bool isLoading;
 
-    [SerializeField] private SceneID currentScene;
+    public SceneID currentScene;
 
     [Header("-- PLAYERS --")]
-    public Transform networkPlayersHolder;
-    [SerializeField] private NetworkObject playerPrefab;
-    [SerializeField] private List<NetworkPlayer> playerCharacterList; // figure out how to store player selected character
 
-    [Header("MAIN STAGE")]
-    [SerializeField] private List<Transform> playerSpawnAreas = new List<Transform>(4);
+    public List<NetworkPlayer> playerCharacterList = new List<NetworkPlayer>(4);
+
+    //[Header("MAIN STAGE")]
 
     #region -- Singleton --
     void Awake()
@@ -39,6 +39,7 @@ public class GameManager : NetworkBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+
         } else
         {
             Destroy(gameObject);
@@ -46,9 +47,10 @@ public class GameManager : NetworkBehaviour
     }
     #endregion -- Singleton --
 
+
     public override void OnNetworkSpawn()
     {
-        playerCharacterList = new List<NetworkPlayer>();
+        //playerCharacterList = new List<NetworkPlayer>();
 
         if (IsClient)
         {
@@ -78,11 +80,31 @@ public class GameManager : NetworkBehaviour
 
     private void HandleClientConnected(ulong clientId)
     {
-        NetworkObject newPlayer = Instantiate(playerPrefab, networkPlayersHolder);
+        //RowData newPlayer = new RowData();
+        //PlayerCell info = new PlayerCell();
+        
 
-        if (newPlayer != null)
+        try
         {
-            playerCharacterList.Add(newPlayer.GetComponent<NetworkPlayer>());
+            //info.playerName = "Beebus";
+            //info.currentHealth = 0;
+            //info.isReady = false;
+
+            //newPlayer.columns.Add(info);
+
+            //NetworkObject newPlayerNetworkObject = Instantiate(playerPrefab);
+            //newPlayerNetworkObject.TrySetParent(networkPlayersHolder);
+            //NetworkPlayer playerInfo = newPlayerNetworkObject.GetComponent<NetworkPlayer>();
+            //playerInfo.ClientId = clientId;
+
+            //playerCharacterList.Add(playerInfo);
+
+            //Debug.Log($"Player: {playerInfo.ClientId}  |  " +
+            //    $"Character: {characterDatabase.GetCharacterById(playerInfo.GetCharacter())}");
+        }
+        catch (NullReferenceException e)
+        {
+            Debug.Log(e.Message);
         }
     }
 
@@ -90,12 +112,12 @@ public class GameManager : NetworkBehaviour
     {
         for (int i = 0; i < playerCharacterList.Count; i++)
         {
-            if (playerCharacterList[i].ClientId == clientId)
-            {
-                //playerCharacterList.RemoveAt(i);
-                Destroy(playerCharacterList[i]);
-                break;
-            }
+            //if (playerCharacterList[i].ClientId == clientId)
+            //{
+            //    //playerCharacterList.RemoveAt(i);
+            //    Destroy(playerCharacterList[i]);
+            //    break;
+            //}
         }
     }
 
@@ -103,21 +125,21 @@ public class GameManager : NetworkBehaviour
 
     public void ChangeGameScene(SceneID newScene)
     {
-        switch (newScene)
-        {
-            case SceneID.MainMenu:
-                Debug.Log("To the main menu!");
-                break;
-            case SceneID.Lobby:
-                Debug.Log("To the lobby!");
-                break;
-            case SceneID.CharacterSelect:
-                Debug.Log("Who up choosing they character?");
-                break;
-            case SceneID.TestingGrounds:
-                Debug.Log("The actual main stage isn't ready yet sorry guys");
-                break;
-        }
+        //switch (newScene)
+        //{
+        //    case SceneID.MainMenu:
+        //        Debug.Log("To the main menu!");
+        //        break;
+        //    case SceneID.Lobby:
+        //        Debug.Log("To the lobby!");
+        //        break;
+        //    case SceneID.CharacterSelect:
+        //        Debug.Log("Who up choosing they character?");
+        //        break;
+        //    case SceneID.Stage:
+        //        Debug.Log("The actual main stage isn't ready yet sorry guys");
+        //        break;
+        //}
         
         LoadScene(newScene);
         currentScene = newScene;
@@ -135,12 +157,14 @@ public class GameManager : NetworkBehaviour
             return;
         }
 
-        if (NetworkManager.Singleton.IsServer)
+        else if (NetworkManager.Singleton.IsServer)
         {
             LoadNetworkScene(scene);
+            return;
         } else
         {
             RequestSceneLoadServerRpc(scene);
+            return;
         }
     }
 
@@ -148,7 +172,7 @@ public class GameManager : NetworkBehaviour
     {
         isLoading = true;
 
-        NetworkManager.SceneManager.LoadScene(scene.ToString(), LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene(scene.ToString(), LoadSceneMode.Single);
     }
 
     IEnumerator LoadOffline(SceneID scene)

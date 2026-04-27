@@ -22,7 +22,7 @@ public class HitstunState : CharacterState
 
         controller.hitstunTimer -= Time.deltaTime;
 
-        if (controller.hitstunTimer < 0)
+        if (controller.hitstunTimer <= 0)
         {
             if (!controller.isGrounded())
             {

@@ -24,7 +24,7 @@ namespace Combat
             }
         }
 
-        [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+        [Rpc(SendTo.Owner, InvokePermission = RpcInvokePermission.Everyone)]
         public void ReportHitServerRpc(MovePacketNet packet)
         {
             CharacterController attacker = GetNetworkObject(packet.attackerID)
@@ -32,6 +32,8 @@ namespace Combat
 
             HitboxData hbData = attacker.data.moves[packet.MoveIndex]
                 .hitboxes[packet.HitboxIndex];
+
+            // server auth goes here?
 
             owner.ResolveHit(attacker, hbData, packet);
 

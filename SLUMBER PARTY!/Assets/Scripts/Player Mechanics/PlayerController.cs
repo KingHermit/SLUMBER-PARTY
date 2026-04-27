@@ -8,8 +8,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : CharacterController
 {
-    // -- PLAYER STATES --
-    [Header("States")]
+    // -- CHOSEN CHAR INFO --
+    [Header("Chosen Character")]
+    private static int selectedChar;
     
     [Header("Ground Check")]
     private PlatformEffector2D effector;
@@ -73,6 +74,7 @@ public class PlayerController : CharacterController
 
     public override void RequestHitstun()
     {
+        if (!IsOwner) return;
         TransitionToState(StateID.Stunned);
     }
 
@@ -114,8 +116,6 @@ public class PlayerController : CharacterController
     {
         if (stateMachine.CurrentStateID.Value == StateID.Attacking) return;
 
-        //var packet = new MovePacketNet { MoveIndex = moveIndex };
-        //RequestStateAttack(packet);
         TransitionToState(StateID.Attacking, moveIndex);
     }
 
@@ -133,23 +133,34 @@ public class PlayerController : CharacterController
     #region NETWORKING
     public override void OnNetworkSpawn()
     {
+        if (GameManager.instance.currentScene == SceneID.Stage ||
+            GameManager.instance.currentScene == SceneID.TestingGrounds)
+        {
+            ApplyCharacter(selectedChar);
+        }
+
         input.enabled = IsOwner;
         cinemaCam.SetActive(IsOwner);
 
         if (IsClient)
         {
-            stateMachine.CurrentStateID.OnValueChanged += (oldID, newID) =>
-            {
-                //TransitionToState(newID, moveIndex);
-                stateMachine.ChangeState(newID, moveIndex);
-            };
+            stateMachine.CurrentStateID.OnValueChanged += (oldID, newID) 
+                => OnStateChange(newID, stateMachine.CurrentAttackIndex.Value);
 
-            // subscribe to attack index changes soon
-            stateMachine.CurrentAttackIndex.OnValueChanged += (oldIdx, newIdx) =>
-            {
-                stateMachine.ChangeAttackIndex(newIdx);
-            };
+            stateMachine.CurrentAttackIndex.OnValueChanged += (oldIdx, newIdx) 
+                => OnStateChange(stateMachine.CurrentStateID.Value, newIdx);
         }
+    }
+
+    private void SpawnCharacter()
+    {
+
+    }
+
+    private void ApplyCharacter(int selectedID)
+    {
+        var selectedData = CharacterDatabase.instance.GetCharacterById(selectedID);
+        data = selectedData;
     }
 
     public override void OnNetworkDespawn()
@@ -158,17 +169,20 @@ public class PlayerController : CharacterController
 
         if (IsClient)
         {
-            stateMachine.CurrentStateID.OnValueChanged -= (oldID, newID) =>
-            {
-                //TransitionToState(newID, moveIndex);
-                stateMachine.ChangeState(newID, moveIndex);
-            };
+            stateMachine.CurrentStateID.OnValueChanged -= (oldID, newID) 
+                => OnStateChange(newID, stateMachine.CurrentAttackIndex.Value);
 
-            stateMachine.CurrentAttackIndex.OnValueChanged += (oldIdx, newIdx) =>
-            {
-                stateMachine.ChangeAttackIndex(newIdx);
-            };
+            stateMachine.CurrentAttackIndex.OnValueChanged -= (oldIdx, newIdx) 
+                => OnStateChange(stateMachine.CurrentStateID.Value, newIdx);
         }
+    }
+
+    private void OnStateChange(StateID? newState=null, int newID=-1) // subscribe to stat changes
+    {
+        StateID _newState = (newState ?? stateMachine.CurrentStateID.Value);
+        int newIndex = (newID != -1 ? newID : stateMachine.CurrentAttackIndex.Value);
+
+        TransitionToState(_newState, newIndex);
     }
 
     #endregion NETWORKING
@@ -221,7 +235,9 @@ public class PlayerController : CharacterController
 
     #endregion INPUTSYSTEMCALLBACKS
 
-    #region DAMAGE
+    #region GETTERS AND SETTERS
 
-    #endregion DAMAGE
+    public void SetCharacter(int charIndex) => selectedChar = charIndex;
+
+    #endregion GETTERS AND SETTERS
 }

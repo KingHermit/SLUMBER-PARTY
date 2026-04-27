@@ -53,7 +53,7 @@ namespace Combat
         // hitbox detects collision with hurtbox
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (!owner.IsServer) return; //WOOHOO!
+            if (!owner.IsOwner) return; 
 
             if (!collision.TryGetComponent(out HurtboxController hurtbox))
                 return;
@@ -61,7 +61,7 @@ namespace Combat
             if (hurtbox == null) return;
             if (hurtbox.owner == owner) return;
 
-            Debug.Log($"Trigger on {hurtbox.owner.OwnerClientId} | isHost={hurtbox.owner.IsSessionOwner}");
+            Debug.Log($"Trigger on {hurtbox.owner.OwnerClientId}");
 
             MovePacketNet packet = new MovePacketNet
             {
