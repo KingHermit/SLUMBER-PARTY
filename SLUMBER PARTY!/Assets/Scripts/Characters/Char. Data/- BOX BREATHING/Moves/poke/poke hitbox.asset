@@ -19,7 +19,7 @@ MonoBehaviour:
   endFrame: 2
   hitstunDuration: 0.4
   hitstopDuration: 0.1
-  damage: 1
+  damage: 3
   direction: {x: 3, y: 0}
   knockbackForce: 1.5
   audio: {fileID: 8300000, guid: 7c547791d50623a4c96e350e51a8e528, type: 3}

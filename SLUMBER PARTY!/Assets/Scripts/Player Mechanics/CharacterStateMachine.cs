@@ -27,7 +27,7 @@ public class CharacterStateMachine : NetworkBehaviour
 
     public void ChangeState(StateID newState, int moveIndex = -1)
     {
-        //if (!IsOwner) return;
+        if (!IsOwner) return;
 
         // "Yeah it's not here boss"
         if (!stateInstances.ContainsKey(newState)) return;
@@ -39,8 +39,6 @@ public class CharacterStateMachine : NetworkBehaviour
         {
             ChangeAttackIndex(moveIndex);
         }
-
-        //Debug.Log($"From Client {OwnerClientId}: State change to {newState} with moveIndex {CurrentAttackIndex.Value}");
 
         stateInstances[CurrentStateID.Value].Enter();
     }

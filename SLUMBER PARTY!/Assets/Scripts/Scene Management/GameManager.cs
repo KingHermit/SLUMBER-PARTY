@@ -30,8 +30,6 @@ public class GameManager : NetworkBehaviour
 
     public List<NetworkPlayer> playerCharacterList = new List<NetworkPlayer>(4);
 
-    //[Header("MAIN STAGE")]
-
     #region -- Singleton --
     void Awake()
     {
@@ -48,99 +46,28 @@ public class GameManager : NetworkBehaviour
     #endregion -- Singleton --
 
 
-    public override void OnNetworkSpawn()
+    private void OnEnable()
     {
-        //playerCharacterList = new List<NetworkPlayer>();
-
-        if (IsClient)
-        {
-
-        }
-
-        if (IsServer)
-        {
-            NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
-            NetworkManager.Singleton.OnClientConnectedCallback += HandleClientDisconnected;
-        }
+        if (NetworkManager.Singleton != null)
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
     }
 
-    public override void OnNetworkDespawn()
+    private void OnDisable()
     {
-        if (IsClient)
-        {
-
-        }
-
-        if (IsServer)
-        {
-            NetworkManager.Singleton.OnClientConnectedCallback -= HandleClientConnected;
-            NetworkManager.Singleton.OnClientConnectedCallback -= HandleClientDisconnected;
-        }
+        if (NetworkManager.Singleton != null)
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
     }
 
-    private void HandleClientConnected(ulong clientId)
+    private void OnSceneLoaded(string sceneName, LoadSceneMode mode,
+    List<ulong> completed, List<ulong> timedOut)
     {
-        //RowData newPlayer = new RowData();
-        //PlayerCell info = new PlayerCell();
-        
-
-        try
-        {
-            //info.playerName = "Beebus";
-            //info.currentHealth = 0;
-            //info.isReady = false;
-
-            //newPlayer.columns.Add(info);
-
-            //NetworkObject newPlayerNetworkObject = Instantiate(playerPrefab);
-            //newPlayerNetworkObject.TrySetParent(networkPlayersHolder);
-            //NetworkPlayer playerInfo = newPlayerNetworkObject.GetComponent<NetworkPlayer>();
-            //playerInfo.ClientId = clientId;
-
-            //playerCharacterList.Add(playerInfo);
-
-            //Debug.Log($"Player: {playerInfo.ClientId}  |  " +
-            //    $"Character: {characterDatabase.GetCharacterById(playerInfo.GetCharacter())}");
-        }
-        catch (NullReferenceException e)
-        {
-            Debug.Log(e.Message);
-        }
-    }
-
-    private void HandleClientDisconnected(ulong clientId)
-    {
-        for (int i = 0; i < playerCharacterList.Count; i++)
-        {
-            //if (playerCharacterList[i].ClientId == clientId)
-            //{
-            //    //playerCharacterList.RemoveAt(i);
-            //    Destroy(playerCharacterList[i]);
-            //    break;
-            //}
-        }
+        isLoading = false;
     }
 
     #region -- SCENE LOADING --
 
     public void ChangeGameScene(SceneID newScene)
     {
-        //switch (newScene)
-        //{
-        //    case SceneID.MainMenu:
-        //        Debug.Log("To the main menu!");
-        //        break;
-        //    case SceneID.Lobby:
-        //        Debug.Log("To the lobby!");
-        //        break;
-        //    case SceneID.CharacterSelect:
-        //        Debug.Log("Who up choosing they character?");
-        //        break;
-        //    case SceneID.Stage:
-        //        Debug.Log("The actual main stage isn't ready yet sorry guys");
-        //        break;
-        //}
-        
         LoadScene(newScene);
         currentScene = newScene;
     }
@@ -149,30 +76,30 @@ public class GameManager : NetworkBehaviour
     private void LoadScene(SceneID scene)
     {
         if (isLoading) return;
-        
 
-        if (NetworkManager.Singleton == null) // Offline 
+        var nm = NetworkManager.Singleton;
+
+        if (nm == null || !nm.IsListening) // OFFLINE
         {
             StartCoroutine(LoadOffline(scene));
             return;
         }
 
-        else if (NetworkManager.Singleton.IsServer)
+        if (nm.IsServer) // ONLINE
         {
             LoadNetworkScene(scene);
-            return;
-        } else
-        {
-            RequestSceneLoadServerRpc(scene);
-            return;
         }
+        
+        // CLIENTS DON'T DO CRAP
     }
 
     private void LoadNetworkScene(SceneID scene)
     {
         isLoading = true;
 
-        NetworkManager.Singleton.SceneManager.LoadScene(scene.ToString(), LoadSceneMode.Single);
+        NetworkManager.SceneManager.LoadScene(scene.ToString(), LoadSceneMode.Single);
+
+        isLoading = false;
     }
 
     IEnumerator LoadOffline(SceneID scene)
@@ -187,12 +114,6 @@ public class GameManager : NetworkBehaviour
         }
 
         isLoading = false;
-    }
-
-    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
-    void RequestSceneLoadServerRpc(SceneID scene)
-    {
-        LoadNetworkScene(scene);
     }
 
     #endregion -- SCENE LOADING --

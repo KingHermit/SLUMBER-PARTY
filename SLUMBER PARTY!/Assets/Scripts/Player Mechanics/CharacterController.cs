@@ -60,6 +60,8 @@ public abstract class CharacterController : NetworkBehaviour
 
     protected virtual void Awake()
     {
+        DontDestroyOnLoad(gameObject);
+
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();

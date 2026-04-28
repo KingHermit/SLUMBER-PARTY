@@ -78,21 +78,20 @@ namespace SLUMBER_PARTY.LobbyUtils
             if (joinedLobby != null)
             {
                 lobbyUpdateTimer -= Time.deltaTime;
-                if (lobbyUpdateTimer <= 0f)
-                {
-                    float lobbyUpdateTimerMax = 1.1f;
-                    lobbyUpdateTimer = lobbyUpdateTimerMax;
+                if (lobbyUpdateTimer > 0f) return;
 
-                    Lobby lobby = await LobbyService.Instance.GetLobbyAsync(joinedLobby.Id);
-                    SetLobby(lobby);
-                }
+                lobbyUpdateTimer = 1.1f;
+
+                Lobby lobby = await LobbyService.Instance.GetLobbyAsync(joinedLobby.Id);
+                SetLobby(lobby);
 
                 if (NetworkManager.Singleton.IsClient &&
                     joinedLobby.Data.TryGetValue("GameState", out var gameState))
                 {
                     if (!IsLobbyHost() && gameState.Value == "Starting")
                     {
-                        JoinGameSession();
+                        Debug.Log("Oh yeah we're starting by the way GET YOUR ASS IN HERE");
+                        JoinGameSession(); // other client not joining...!?
                     }
                 }
             }
@@ -249,6 +248,9 @@ namespace SLUMBER_PARTY.LobbyUtils
             // Step 2: Start NGO
             // Step 3: now RPCs + network scene load WORK
             //NetworkManager.SceneManager.LoadScene("CharacterSelect", LoadSceneMode.Single);
+
+            Debug.Log("The game is starting! Going to character select screen...");
+
             await LobbyService.Instance.UpdateLobbyAsync(joinedLobby.Id, new UpdateLobbyOptions
             {
                 Data = new Dictionary<string, DataObject>

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Cinemachine;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,7 +11,7 @@ public class PlayerController : CharacterController
 {
     // -- CHOSEN CHAR INFO --
     [Header("Chosen Character")]
-    private static int selectedChar;
+    private static NetworkVariable<int> selectedChar;
     
     [Header("Ground Check")]
     private PlatformEffector2D effector;
@@ -133,11 +134,11 @@ public class PlayerController : CharacterController
     #region NETWORKING
     public override void OnNetworkSpawn()
     {
-        if (GameManager.instance.currentScene == SceneID.Stage ||
-            GameManager.instance.currentScene == SceneID.TestingGrounds)
-        {
-            ApplyCharacter(selectedChar);
-        }
+        //if (GameManager.instance.currentScene == SceneID.Stage ||
+        //    GameManager.instance.currentScene == SceneID.TestingGrounds)
+        //{
+        //    ApplyCharacter(selectedChar);
+        //}
 
         input.enabled = IsOwner;
         cinemaCam.SetActive(IsOwner);
@@ -237,7 +238,7 @@ public class PlayerController : CharacterController
 
     #region GETTERS AND SETTERS
 
-    public void SetCharacter(int charIndex) => selectedChar = charIndex;
+    public void SetCharacter(int charIndex) => selectedChar.Value = charIndex;
 
     #endregion GETTERS AND SETTERS
 }
