@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15dd1430358ca2d45ba991aad45a4dee, type: 3}
+  m_Name: flurry
+  m_EditorClassIdentifier: 
+  moveName: flurry
+  type: medium
+  startup: 3
+  active: 10
+  recovery: 5
+  animation: {fileID: 0}
+  hitboxes:
+  - {fileID: 11400000, guid: fd1ca19a06b1aef46b69ec1d00925b80, type: 2}
+  - {fileID: 11400000, guid: a294fc8b7879139469ed15693bbe7bae, type: 2}
+  - {fileID: 11400000, guid: ea09ac16b67752d4189aceec5bd1510c, type: 2}
+  - {fileID: 11400000, guid: 4c18c231575085e4f8a4e41b21344422, type: 2}
+  - {fileID: 11400000, guid: ac854ea02d2ad2c4ab81de3320b6bead, type: 2}
+  canMove: 1

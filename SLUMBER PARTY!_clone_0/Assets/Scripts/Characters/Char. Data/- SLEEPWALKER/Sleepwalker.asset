@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 271a3e010122f9849904884c8c11d9e5, type: 3}
+  m_Name: Sleepwalker
+  m_EditorClassIdentifier: 
+  id: 1
+  CharacterName: Sleepwalker
+  CharacterDescription: this character doesnt work yet dont choose it ok
+  CharacterType: he goes beast mode
+  selectIcon: {fileID: 2113444844011588226, guid: 772cdcc1c81ee774e98431f9ebe3082e, type: 3}
+  speed: 8
+  jumpForce: 9.5
+  animatorController: {fileID: 0}
+  moves: []

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 271a3e010122f9849904884c8c11d9e5, type: 3}
+  m_Name: Test Player
+  m_EditorClassIdentifier: 
+  id: 0
+  CharacterName: Box Breathing
+  CharacterDescription: he's our test dummuy
+  CharacterType: THE OG
+  selectIcon: {fileID: 8793639957104055765, guid: 334c477f42c6651468a1c1aa661452d5, type: 3}
+  speed: 8
+  jumpForce: 8.5
+  animatorController: {fileID: 9100000, guid: c738e69ad95c4da45ad4603909e6bf64, type: 2}
+  moves:
+  - {fileID: 11400000, guid: 61eb8548af2ecac4191875a3c6e5cdac, type: 2}
+  - {fileID: 11400000, guid: 997cb03690d0110488e0e4cbd933012d, type: 2}
+  - {fileID: 11400000, guid: 9372ef15d944db7429f0a79eaec63ba0, type: 2}
+  - {fileID: 11400000, guid: 03e648c183bb25642b7d1ed5c10ac9bc, type: 2}

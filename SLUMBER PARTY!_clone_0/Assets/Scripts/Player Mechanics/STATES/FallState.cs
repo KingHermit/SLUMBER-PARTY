@@ -1,0 +1,59 @@
+using UnityEngine;
+
+public class FallingState : CharacterState
+{
+    float decayMultiplier = 1f;
+
+    public FallingState(CharacterController controller, CharacterStateMachine stateMachine)
+        : base(controller, stateMachine) { }
+
+    // Called ONCE when entering the state
+    public override void Enter() {
+        controller.animator.SetBool("isFalling", true);
+
+        if (controller.wasLaunched)
+        {
+            decayMultiplier = 2f;
+            controller.wasLaunched = false;
+        }
+    }
+
+    // Called ONCE when exiting the state
+    public override void Exit() {
+        controller.animator.SetBool("isFalling", false);
+    }
+
+    // Called every frame
+    public override void UpdateLogic() {
+
+        if (controller.isGrounded())
+        {
+            if (controller.MoveDirection.Value.x != 0)
+            {
+                controller.RequestRun(controller.MoveDirection.Value);
+                return;
+            } else
+            {
+                controller.RequestIdle();
+                return;
+            }
+        }
+    }
+
+    // Called every physics frame
+    public override void UpdatePhysics() {
+        // Air control while falling
+        float x = Mathf.Lerp(
+            controller.rb.linearVelocity.x,
+            (controller.MoveDirection.Value.x * controller.playerSpeed),
+            decayMultiplier * Time.fixedDeltaTime
+            );
+
+        float y = Mathf.Max(
+            controller.rb.linearVelocity.y,
+            -controller.maxFallSpeed
+            );
+
+        controller.rb.linearVelocity = new Vector2(x, y);
+    }
+}
